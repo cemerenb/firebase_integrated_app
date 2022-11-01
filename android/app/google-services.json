@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "365209518610",
+    "project_id": "fir-integrated-app",
+    "storage_bucket": "fir-integrated-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:365209518610:android:10d994c4c91a640a6a4ecb",
+        "android_client_info": {
+          "package_name": "com.cemerenb.firebase_integrated_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "365209518610-857fq2tovkg0sl6jee6pav2mb9mjjho7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMR1Qt6YaOLNCMwZ1mdZEBEVClbG6tCK0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "365209518610-857fq2tovkg0sl6jee6pav2mb9mjjho7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
