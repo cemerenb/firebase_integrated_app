@@ -9,6 +9,11 @@ class AuthService {
     return await _auth.signOut();
   }
 
+  static FindUser() {
+    var user = _auth.currentUser;
+    return user;
+  }
+
   static Future<User?> createPerson(String username, String email, String password) async {
     var user = await _auth.createUserWithEmailAndPassword(email: email, password: password);
     await _firestore.collection('person').doc(user.user!.uid).set({

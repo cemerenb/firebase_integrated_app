@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_integrated_app/pages/verify_email.dart';
 import 'package:flutter/material.dart';
 
 import '../components/password_text_field_with_validation.dart';
 import '../services/auth.dart';
 import '../utils/navigation.dart';
-import 'login_page.dart';
 
 class CreatePasswordPage extends StatefulWidget {
   final String username;
@@ -68,7 +68,7 @@ class _CreatePasswordPageState extends State<CreatePasswordPage> {
                           });
                         } else {
                           if (mounted) {
-                            Navigation.navigateRoute(context, const LoginPage());
+                            Navigation.navigateRoute(context, EmailVerification());
                           }
                         }
                       } on FirebaseAuthException catch (e) {

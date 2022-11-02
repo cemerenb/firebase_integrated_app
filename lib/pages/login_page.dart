@@ -6,7 +6,8 @@ import '../components/password_text_field_with_validation.dart';
 
 // ignore: camel_case_types
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  final bool showLeading;
+  const LoginPage({super.key, this.showLeading = true});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -34,15 +35,16 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-          // leading: IconButton(
-          //     icon: Icon(Icons.arrow_back),
-          //     onPressed: () {
-          //       Navigator.pushAndRemoveUntil(
-          //           context,
-          //           MaterialPageRoute(builder: ((context) => HomePage())),
-          //           (route) => false);
-          //     }),
-          ),
+        automaticallyImplyLeading: widget.showLeading,
+        // leading: IconButton(
+        //     icon: Icon(Icons.arrow_back),
+        //     onPressed: () {
+        //       Navigator.pushAndRemoveUntil(
+        //           context,
+        //           MaterialPageRoute(builder: ((context) => HomePage())),
+        //           (route) => false);
+        //     }),
+      ),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(
@@ -154,9 +156,9 @@ class _LoginPageState extends State<LoginPage> {
             ));
       }
     } on FirebaseAuthException catch (e) {
-      setState(() {
-        errorMessage = e.message;
-      });
+      WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {
+            errorMessage = e.message;
+          }));
 
       // Find the ScaffoldMessenger in the widget tree
 // and use it to show a SnackBar.

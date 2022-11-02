@@ -15,6 +15,18 @@ class Navigation {
     Navigator.pushAndRemoveUntil(context, route, (route) => false);
   }
 
+  static void navigateVerifiedPage(BuildContext context, Widget page) {
+    final route = Navigation.route(page);
+    Navigator.pushAndRemoveUntil(context, route, (route) => false);
+  }
+
+  static void navigateRoutenonVoid(BuildContext context, Widget page) {
+    final route = Navigation.route(page);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Navigator.pushAndRemoveUntil(context, route, (route) => false);
+    });
+  }
+
   static void popRoute(BuildContext context) {
     Navigator.pop(context);
   }

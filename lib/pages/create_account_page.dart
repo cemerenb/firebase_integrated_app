@@ -1,7 +1,7 @@
+import 'package:firebase_integrated_app/pages/create_password_page.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/navigation.dart';
-import 'create_password_page.dart';
 import '../utils/validators.dart';
 
 class CreateAccountPage extends StatefulWidget {
