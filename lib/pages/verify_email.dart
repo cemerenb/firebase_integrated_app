@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_integrated_app/pages/home_page.dart';
 import 'package:firebase_integrated_app/pages/login_page.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +15,8 @@ class EmailVerification extends StatefulWidget {
 }
 
 class _EmailVerificationState extends State<EmailVerification> {
+  bool isEmailVerified = false;
+  bool canResendEmail = false;
   final auth = FirebaseAuth.instance;
 
   User? user;
@@ -38,17 +41,55 @@ class _EmailVerificationState extends State<EmailVerification> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Column(
-        children: [
-          Center(
-            child: Text('An email has been sent to ${user?.email} please check your mailbox and your spam folder'),
-          ),
-        ],
-      ),
-    );
+  Future sendEmailVerification() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser!;
+      await user.sendEmailVerification();
+      setState(() {
+        canResendEmail = false;
+      });
+      await Future.delayed(const Duration(seconds: 60));
+      setState(() {
+        canResendEmail = true;
+      });
+    } catch (e) {
+      setState(() {
+        SnackBar(content: Text(e.toString()));
+      });
+    }
   }
+
+  @override
+  Widget build(BuildContext context) => isEmailVerified
+      ? const HomePage()
+      : Scaffold(
+          appBar: AppBar(
+              title: Text(
+            'Verify Your Account',
+            style: Theme.of(context).textTheme.headline5?.copyWith(fontSize: 20, fontWeight: FontWeight.w600),
+          )),
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                    'We have sent an email for account verification to ${user?.email} Please check your mailbox and your spam folder.',
+                    style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                MaterialButton(
+                  minWidth: double.infinity,
+                  onPressed: () {
+                    canResendEmail ? sendEmailVerification() : const Text('Please wait to send again');
+                  },
+                  color: Colors.black,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  child: const Text(
+                    'Creat Account',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
 }

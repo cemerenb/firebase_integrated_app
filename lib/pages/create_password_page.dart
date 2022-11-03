@@ -68,7 +68,7 @@ class _CreatePasswordPageState extends State<CreatePasswordPage> {
                           });
                         } else {
                           if (mounted) {
-                            Navigation.navigateRoute(context, EmailVerification());
+                            Navigation.navigateRoute(context, const EmailVerification());
                           }
                         }
                       } on FirebaseAuthException catch (e) {

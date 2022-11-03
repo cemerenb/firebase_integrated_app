@@ -22,6 +22,9 @@ class _LoginPageState extends State<LoginPage> {
   final bool _validate = false;
   String? errorMessage;
   bool _isVisible = false;
+  final auth = FirebaseAuth.instance;
+
+  User? user;
 
   @override
   void dispose() {
@@ -143,17 +146,24 @@ class _LoginPageState extends State<LoginPage> {
         builder: ((context) => const Center(
               child: CircularProgressIndicator(),
             )));
+
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      final usercred = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email.trim(),
         password: password.trim(),
       );
-      if (mounted) {
+      user = usercred.user;
+      if (user?.emailVerified == true) {
         return Navigation.addRoute(
             context,
             WelcomePage(
               email: email,
             ));
+      } else {
+        errorMessage = "Please verify your email\nAn email sent to your mailbox";
+        setState(() {});
+        user?.sendEmailVerification();
+        FirebaseAuth.instance.signOut();
       }
     } on FirebaseAuthException catch (e) {
       WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {
