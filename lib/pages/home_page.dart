@@ -20,7 +20,7 @@ class HomePage extends StatelessWidget {
                 style: Theme.of(context).textTheme.headline2,
               ),
               const SizedBox(
-                height: 100,
+                height: 50,
               ),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 30),
@@ -29,7 +29,7 @@ class HomePage extends StatelessWidget {
                       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Maecenas ultricies mi eget mauris. Sem et tortor consequat id porta. Pretium aenean pharetra magna ac placerat. Mauris vitae ultricies leo integer.'),
                 ),
               ),
-              const SizedBox(height: 100),
+              const SizedBox(height: 50),
               MaterialButton(
                   minWidth: double.infinity,
                   onPressed: () async {

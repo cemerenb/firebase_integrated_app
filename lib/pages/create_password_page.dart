@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_integrated_app/pages/verify_email.dart';
+import 'package:firebase_integrated_app/pages/profile_picture.dart';
 import 'package:flutter/material.dart';
 
 import '../components/password_text_field_with_validation.dart';
@@ -68,7 +68,7 @@ class _CreatePasswordPageState extends State<CreatePasswordPage> {
                           });
                         } else {
                           if (mounted) {
-                            Navigation.navigateRoute(context, const EmailVerification());
+                            Navigation.navigateRoute(context, const ProfilePicture());
                           }
                         }
                       } on FirebaseAuthException catch (e) {

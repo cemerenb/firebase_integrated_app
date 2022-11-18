@@ -22,38 +22,7 @@ class WelcomePage extends StatelessWidget {
       ),
       body: Center(
         child: Column(
-          children: [
-            Text(
-              'Hoş Geldin',
-              style: Theme.of(context).textTheme.headline3,
-            ),
-            const SizedBox(
-              height: 100,
-            ),
-            Text(
-              email,
-              style: const TextStyle(fontSize: 20),
-            ),
-            const SizedBox(
-              height: 40,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-              child: MaterialButton(
-                minWidth: double.infinity,
-                onPressed: () {
-                  FirebaseAuth.instance.signOut();
-                  Navigation.navigateRoute(context, const HomePage());
-                },
-                color: Colors.black,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                child: const Text(
-                  'Sign Out',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-          ],
+          children: const [],
         ),
       ),
     );
