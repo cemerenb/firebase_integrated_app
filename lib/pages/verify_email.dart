@@ -66,7 +66,10 @@ class _EmailVerificationState extends State<EmailVerification> {
           appBar: AppBar(
               title: Text(
             'Verify Your Account',
-            style: Theme.of(context).textTheme.headline5?.copyWith(fontSize: 20, fontWeight: FontWeight.w600),
+            style: Theme.of(context)
+                .textTheme
+                .headline5
+                ?.copyWith(fontSize: 20, fontWeight: FontWeight.w600),
           )),
           body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -75,14 +78,18 @@ class _EmailVerificationState extends State<EmailVerification> {
               children: [
                 Text(
                     'We have sent an email for account verification to ${user?.email} Please check your mailbox and your spam folder.',
-                    style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                    style: const TextStyle(
+                        fontSize: 25, fontWeight: FontWeight.bold)),
                 MaterialButton(
                   minWidth: double.infinity,
                   onPressed: () {
-                    canResendEmail ? sendEmailVerification() : const Text('Please wait to send again');
+                    canResendEmail
+                        ? sendEmailVerification()
+                        : const Text('Please wait to send again');
                   },
                   color: Colors.black,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
                   child: const Text(
                     'Creat Account',
                     style: TextStyle(color: Colors.white),

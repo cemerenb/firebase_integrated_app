@@ -15,7 +15,11 @@ class LoginPage extends StatefulWidget {
 
 // ignore: camel_case_types
 class _LoginPageState extends State<LoginPage> {
-  GlobalKey<PasswordTextFieldWithValidationState> textFieldKey = GlobalKey<PasswordTextFieldWithValidationState>();
+  GlobalKey<PasswordTextFieldWithValidationState> textFieldKey =
+      GlobalKey<PasswordTextFieldWithValidationState>();
+  Future<bool> _onWillPop() async {
+    return false;
+  }
 
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -23,8 +27,6 @@ class _LoginPageState extends State<LoginPage> {
   String? errorMessage;
   bool _isVisible = false;
   final auth = FirebaseAuth.instance;
-
-  User? user;
 
   @override
   void dispose() {
@@ -35,85 +37,85 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        automaticallyImplyLeading: widget.showLeading,
-        // leading: IconButton(
-        //     icon: Icon(Icons.arrow_back),
-        //     onPressed: () {
-        //       Navigator.pushAndRemoveUntil(
-        //           context,
-        //           MaterialPageRoute(builder: ((context) => HomePage())),
-        //           (route) => false);
-        //     }),
-      ),
-      body: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Log In', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-            const SizedBox(
-              height: 10,
-            ),
-            const Text('Please sign in to continue'),
-            const SizedBox(
-              height: 30,
-            ),
-            _usernameTextField(),
-            TextField(
-              keyboardType: TextInputType.text,
-              controller: passwordController,
-              obscureText: !_isVisible,
-              decoration: InputDecoration(
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _isVisible = !_isVisible;
-                      });
-                    },
-                    icon: _isVisible
-                        ? const Icon(
-                            Icons.visibility,
-                            color: Colors.black,
-                          )
-                        : const Icon(
-                            Icons.visibility_off,
-                            color: Color.fromARGB(255, 146, 146, 146),
-                          ),
-                  ),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Color.fromARGB(255, 148, 146, 146))),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Colors.black)),
-                  hintText: 'Password',
-                  contentPadding: const EdgeInsets.all(20.0)),
-            ),
-            if (errorMessage != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 30),
-                child: Text(errorMessage!),
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          automaticallyImplyLeading: widget.showLeading,
+        ),
+        body: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Log In',
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+              const SizedBox(
+                height: 10,
               ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 30),
-              child: Center(
-                child: MaterialButton(
-                  minWidth: double.infinity,
-                  onPressed: () {
-                    signIn(emailController.text, passwordController.text, context);
-                  },
-                  color: Colors.black,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  child: const Text(
-                    'Sign In',
-                    style: TextStyle(color: Colors.white),
+              const Text('Please sign in to continue'),
+              const SizedBox(
+                height: 30,
+              ),
+              _usernameTextField(),
+              TextField(
+                keyboardType: TextInputType.text,
+                controller: passwordController,
+                obscureText: !_isVisible,
+                decoration: InputDecoration(
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _isVisible = !_isVisible;
+                        });
+                      },
+                      icon: _isVisible
+                          ? const Icon(
+                              Icons.visibility,
+                              color: Colors.black,
+                            )
+                          : const Icon(
+                              Icons.visibility_off,
+                              color: Color.fromARGB(255, 146, 146, 146),
+                            ),
+                    ),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(
+                            color: Color.fromARGB(255, 148, 146, 146))),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: Colors.black)),
+                    hintText: 'Password',
+                    contentPadding: const EdgeInsets.all(20.0)),
+              ),
+              if (errorMessage != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 30),
+                  child: Text(errorMessage!),
+                ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 30),
+                child: Center(
+                  child: MaterialButton(
+                    minWidth: double.infinity,
+                    onPressed: () async {
+                      signIn(emailController.text, passwordController.text,
+                          context);
+                    },
+                    color: Colors.black,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    child: const Text(
+                      'Sign In',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -130,9 +132,11 @@ class _LoginPageState extends State<LoginPage> {
             errorText: _validate ? "Email Can't Be Empty" : null,
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: Color.fromARGB(255, 148, 146, 146))),
+                borderSide: const BorderSide(
+                    color: Color.fromARGB(255, 148, 146, 146))),
             focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Colors.black)),
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Colors.black)),
             hintText: 'Email',
             contentPadding: const EdgeInsets.all(20.0)),
       ),
@@ -152,22 +156,25 @@ class _LoginPageState extends State<LoginPage> {
         email: email.trim(),
         password: password.trim(),
       );
-      user = usercred.user;
+
+      final user = usercred.user;
       if (user?.emailVerified == true) {
+        // ignore: use_build_context_synchronously
         return Navigation.addRoute(
             context,
             WelcomePage(
               email: email,
             ));
       } else {
-        errorMessage = "Please verify your email\nAn email sent to your mailbox";
+        errorMessage =
+            "Please verify your email\nAn email sent to your mailbox";
         setState(() {});
         user?.sendEmailVerification();
         FirebaseAuth.instance.signOut();
       }
-    } on FirebaseAuthException catch (e) {
+    } catch (e) {
       WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {
-            errorMessage = e.message;
+            errorMessage = e.toString();
           }));
 
       // Find the ScaffoldMessenger in the widget tree

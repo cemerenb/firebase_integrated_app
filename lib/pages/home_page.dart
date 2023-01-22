@@ -1,12 +1,11 @@
+import 'package:firebase_integrated_app/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import '../utils/navigation.dart';
-import 'login_page.dart';
 
 import 'create_account_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +35,8 @@ class HomePage extends StatelessWidget {
                     Navigation.addRoute(context, const CreateAccountPage());
                   },
                   color: Colors.black,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
                   child: const Text(
                     'Register',
                     style: TextStyle(color: Colors.white),
@@ -54,7 +54,8 @@ class HomePage extends StatelessWidget {
                     Navigation.addRoute(context, const LoginPage());
                   },
                   color: Colors.black,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
                   child: const Text(
                     'Log In',
                     style: TextStyle(color: Colors.white),

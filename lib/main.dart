@@ -9,8 +9,15 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Widget currentPage = const HomePage();
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +27,8 @@ class MyApp extends StatelessWidget {
       darkTheme: ThemeData.dark().copyWith(
         backgroundColor: Colors.white,
         listTileTheme: const ListTileThemeData(contentPadding: EdgeInsets.zero),
-        progressIndicatorTheme: const ProgressIndicatorThemeData(color: Colors.white),
+        progressIndicatorTheme:
+            const ProgressIndicatorThemeData(color: Colors.white),
         appBarTheme: const AppBarTheme(
           centerTitle: true,
           backgroundColor: Colors.transparent,
@@ -31,7 +39,8 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.system,
       theme: ThemeData.light().copyWith(
         backgroundColor: Colors.white,
-        progressIndicatorTheme: const ProgressIndicatorThemeData(color: Colors.white),
+        progressIndicatorTheme:
+            const ProgressIndicatorThemeData(color: Colors.white),
         listTileTheme: const ListTileThemeData(contentPadding: EdgeInsets.zero),
         appBarTheme: const AppBarTheme(
           centerTitle: true,
@@ -41,7 +50,7 @@ class MyApp extends StatelessWidget {
           elevation: 0,
         ),
       ),
-      home: const HomePage(),
+      home: currentPage,
     );
   }
 }
