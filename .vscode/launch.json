@@ -5,11 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "chrome",
-            "request": "launch",
-            "name": "Chrome'u localhost'ta başlat",
-            "url": "http://localhost:8080",
-            "webRoot": "${workspaceFolder}"
+          "name": "flutter_application",
+          "request": "launch",
+          "type": "dart"
+        },
+        {
+          "name": "flutter_application (profile mode)",
+          "request": "launch",
+          "type": "dart",
+          "flutterMode": "profile"
         }
-    ]
-}
+      ]
+    }

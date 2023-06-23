@@ -1,9 +1,5 @@
-import 'dart:io';
-
 import 'package:firebase_integrated_app/pages/create_password_page.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../utils/navigation.dart';
 import '../utils/validators.dart';
@@ -22,7 +18,6 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
   final bool _uservalidate = false;
   final bool _emailvalidate = false;
-
 
   @override
   void dispose() {

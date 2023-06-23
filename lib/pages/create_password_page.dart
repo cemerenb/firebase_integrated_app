@@ -1,23 +1,13 @@
-import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_integrated_app/pages/home_page.dart';
 import 'package:firebase_integrated_app/pages/profile_details.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../components/password_text_field_with_validation.dart';
 import '../services/auth.dart';
-import '../utils/navigation.dart';
 
 class CreatePasswordPage extends StatefulWidget {
   final String username;
   final String email;
-
-
-
-
 
   const CreatePasswordPage(
       {super.key, required this.username, required this.email});
@@ -44,12 +34,10 @@ class _CreatePasswordPageState extends State<CreatePasswordPage> {
         ),
       ),
       body: Container(
-
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             const Text('Set a password',
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
             const SizedBox(
@@ -89,14 +77,16 @@ class _CreatePasswordPageState extends State<CreatePasswordPage> {
                                 'Unkown error occured please try again';
                           });
                         } else {
-
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileDetails()));
+                          // ignore: use_build_context_synchronously
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ProfileDetails()));
                           return;
                         }
-                      } on FirebaseAuthException catch (e) {
-                        setState(() {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileDetails()));
-                        });
+                      } on FirebaseAuthException {
+                        setState(() {});
                       }
                     }
                   },
