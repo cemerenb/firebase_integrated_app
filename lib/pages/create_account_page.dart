@@ -34,7 +34,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
             'Create Your Account',
             style: Theme.of(context)
                 .textTheme
-                .headline5
+                .headlineSmall
                 ?.copyWith(fontSize: 20, fontWeight: FontWeight.w600),
           ),
         ),

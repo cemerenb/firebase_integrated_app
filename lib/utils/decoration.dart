@@ -15,7 +15,7 @@ class MainPageBoxStyle {
           child: Text(
             data,
             style:
-                Theme.of(context).textTheme.headline6?.copyWith(fontSize: 22),
+                Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 22),
           ),
         ),
         alignment: Alignment.topCenter,

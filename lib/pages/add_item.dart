@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:firebase_integrated_app/lists/lists.dart';
 import 'package:pattern_formatter/pattern_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -13,6 +14,7 @@ class AddItem extends StatefulWidget {
 class _AddItemState extends State<AddItem> {
   String? serialNoScanResult;
   String? locationScanResult;
+  final namecontroller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +25,7 @@ class _AddItemState extends State<AddItem> {
           Padding(
             padding: const EdgeInsets.only(left: 10.0, right: 10),
             child: TextField(
+              controller: namecontroller,
               keyboardType: TextInputType.text,
               decoration: InputDecoration(
                   border: OutlineInputBorder(
@@ -154,18 +157,18 @@ class _AddItemState extends State<AddItem> {
                   contentPadding: const EdgeInsets.all(20.0)),
             ),
           ),
-          Spacer(),
+          const Spacer(),
           Row(
             children: [
-              Spacer(),
+              const Spacer(),
               Padding(
                 padding: const EdgeInsets.all(18.0),
                 child: SizedBox(
                   height: 50,
                   child: ElevatedButton.icon(
-                    onPressed: null,
-                    icon: Icon(Icons.add),
-                    label: Text('Ekle'),
+                    onPressed: () => itemList.add(namecontroller.text),
+                    icon: const Icon(Icons.add),
+                    label: const Text('Ekle'),
                   ),
                 ),
               ),

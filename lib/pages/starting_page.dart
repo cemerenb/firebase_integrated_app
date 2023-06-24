@@ -34,7 +34,7 @@ class _StartPageState extends State<StartPage> {
             snap: true,
             title: Text(
               "Ana Sayfa",
-              style: Theme.of(context).textTheme.headline5,
+              style: Theme.of(context).textTheme.headlineSmall,
             ),
             actions: [
               MaterialButton(
@@ -72,8 +72,8 @@ class _StartPageState extends State<StartPage> {
                                 borderRadius: BorderRadius.circular(20),
                                 color: const Color.fromARGB(255, 161, 161, 161),
                               ),
-                              child: Column(
-                                children: const [
+                              child: const Column(
+                                children: [
                                   Spacer(),
                                   Icon(
                                     Icons.add,
@@ -114,8 +114,8 @@ class _StartPageState extends State<StartPage> {
                                         width:
                                             MediaQuery.of(context).size.width /
                                                 4.9,
-                                        child: Column(
-                                          children: const [
+                                        child: const Column(
+                                          children: [
                                             Spacer(),
                                             Padding(
                                               padding: EdgeInsets.all(10.0),
@@ -141,8 +141,8 @@ class _StartPageState extends State<StartPage> {
                                         width:
                                             MediaQuery.of(context).size.width /
                                                 4.9,
-                                        child: Column(
-                                          children: const [
+                                        child: const Column(
+                                          children: [
                                             Spacer(),
                                             Icon(
                                               Icons.qr_code_2_outlined,
@@ -172,8 +172,8 @@ class _StartPageState extends State<StartPage> {
                                       height: 120,
                                       width: MediaQuery.of(context).size.width /
                                           2.3,
-                                      child: Column(
-                                        children: const [
+                                      child: const Column(
+                                        children: [
                                           Spacer(),
                                           Icon(
                                             Icons.camera_alt_outlined,

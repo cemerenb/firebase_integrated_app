@@ -68,7 +68,7 @@ class _EmailVerificationState extends State<EmailVerification> {
             'Verify Your Account',
             style: Theme.of(context)
                 .textTheme
-                .headline5
+                .headlineSmall
                 ?.copyWith(fontSize: 20, fontWeight: FontWeight.w600),
           )),
           body: Padding(

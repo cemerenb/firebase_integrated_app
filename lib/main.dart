@@ -30,7 +30,6 @@ class _MyAppState extends State<MyApp> {
         inputDecorationTheme:
             const InputDecorationTheme(suffixIconColor: Colors.white),
         buttonTheme: const ButtonThemeData(buttonColor: Colors.white),
-        backgroundColor: Colors.white,
         listTileTheme: const ListTileThemeData(contentPadding: EdgeInsets.zero),
         progressIndicatorTheme:
             const ProgressIndicatorThemeData(color: Colors.white),
@@ -40,6 +39,18 @@ class _MyAppState extends State<MyApp> {
           foregroundColor: Colors.black,
           elevation: 0,
         ),
+        colorScheme: const ColorScheme(
+            background: Color.fromARGB(255, 255, 255, 255),
+            brightness: Brightness.dark,
+            error: Colors.white,
+            onBackground: Colors.white,
+            onError: Colors.white,
+            onPrimary: Color.fromARGB(255, 255, 255, 255),
+            onSecondary: Colors.white,
+            onSurface: Colors.white,
+            primary: Color.fromARGB(255, 112, 112, 112),
+            secondary: Colors.white,
+            surface: Colors.white),
       ),
       themeMode: ThemeMode.system,
       theme: ThemeData.light().copyWith(
@@ -47,7 +58,6 @@ class _MyAppState extends State<MyApp> {
         primaryColor: Colors.black,
         inputDecorationTheme:
             const InputDecorationTheme(suffixIconColor: Colors.black),
-        backgroundColor: Colors.white,
         buttonTheme: const ButtonThemeData(buttonColor: Colors.black),
         progressIndicatorTheme:
             const ProgressIndicatorThemeData(color: Colors.white),
@@ -59,6 +69,18 @@ class _MyAppState extends State<MyApp> {
           foregroundColor: Colors.black,
           elevation: 0,
         ),
+        colorScheme: const ColorScheme(
+            background: Colors.white,
+            brightness: Brightness.light,
+            error: Colors.black,
+            onBackground: Colors.black,
+            onError: Colors.black,
+            onPrimary: Colors.black,
+            onSecondary: Colors.black,
+            onSurface: Colors.black,
+            primary: Color.fromARGB(255, 150, 150, 150),
+            secondary: Colors.black,
+            surface: Colors.black),
       ),
       home: currentPage,
     );
