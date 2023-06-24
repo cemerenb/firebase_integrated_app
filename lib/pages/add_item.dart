@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:firebase_integrated_app/lists/lists.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pattern_formatter/pattern_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -12,9 +13,24 @@ class AddItem extends StatefulWidget {
 }
 
 class _AddItemState extends State<AddItem> {
+  final _itemsBox = Hive.box('itemsBox');
   String? serialNoScanResult;
   String? locationScanResult;
-  final namecontroller = TextEditingController();
+  final nameController = TextEditingController();
+  final serialController = TextEditingController();
+  final expiryController = TextEditingController();
+  final acceptController = TextEditingController();
+  final locationController = TextEditingController();
+
+  static var index = 0;
+
+  Future<void> writeItem(int index, Item item) async {
+    if (index > -1) {
+      await _itemsBox.put(index, item.toJson());
+    }
+  }
+
+  Item item = items[index];
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +41,7 @@ class _AddItemState extends State<AddItem> {
           Padding(
             padding: const EdgeInsets.only(left: 10.0, right: 10),
             child: TextField(
-              controller: namecontroller,
+              controller: nameController,
               keyboardType: TextInputType.text,
               decoration: InputDecoration(
                   border: OutlineInputBorder(
@@ -46,16 +62,14 @@ class _AddItemState extends State<AddItem> {
             padding: const EdgeInsets.only(left: 10.0, right: 10),
             child: TextField(
               keyboardType: TextInputType.text,
-              controller: TextEditingController(
-                  text: serialNoScanResult != '-1'
-                      ? serialNoScanResult
-                      : 'Seri No'),
+              controller: serialController,
               decoration: InputDecoration(
                   suffixIcon: IconButton(
                       onPressed: () {
                         scanBarcode();
                         setState(() {
                           serialNoScanResult = serialNoScanResult;
+                          serialController.text = serialNoScanResult.toString();
                         });
                       },
                       icon: const Icon(
@@ -83,6 +97,7 @@ class _AddItemState extends State<AddItem> {
                 Flexible(
                   child: TextField(
                     keyboardType: TextInputType.datetime,
+                    controller: expiryController,
                     inputFormatters: [
                       DateInputFormatter(),
                     ],
@@ -103,7 +118,7 @@ class _AddItemState extends State<AddItem> {
                 ),
                 Flexible(
                   child: TextField(
-                    controller: TextEditingController(),
+                    controller: acceptController,
                     inputFormatters: [
                       DateInputFormatter(),
                     ],
@@ -130,16 +145,15 @@ class _AddItemState extends State<AddItem> {
             padding: const EdgeInsets.only(left: 10.0, right: 10),
             child: TextField(
               keyboardType: TextInputType.text,
-              controller: TextEditingController(
-                  text: locationScanResult != '-1'
-                      ? locationScanResult
-                      : 'Lokasyon Kodu'),
+              controller: locationController,
               decoration: InputDecoration(
                   suffixIcon: IconButton(
                       onPressed: () {
                         scanQR();
                         setState(() {
                           locationScanResult = locationScanResult;
+                          locationController.text =
+                              locationScanResult.toString();
                         });
                       },
                       icon: const Icon(
@@ -166,7 +180,27 @@ class _AddItemState extends State<AddItem> {
                 child: SizedBox(
                   height: 50,
                   child: ElevatedButton.icon(
-                    onPressed: () => itemList.add(namecontroller.text),
+                    onPressed: () {
+                      int listLenght = itemList.length;
+                      itemList.add(nameController.text);
+                      for (var i = 0; i < itemList.length; i++) {
+                        log(itemList[i]);
+                      }
+                      setState(() {
+                        if (itemList.length > listLenght) {
+                          log('eklendi');
+                        }
+                        item.name = nameController.text;
+                        item.serialNo = serialController.text;
+                        item.expiryDate = expiryController.text;
+                        item.acceptDate = acceptController.text;
+                        item.locationCode = locationController.text;
+                        log(serialController.text);
+                        log(expiryController.text);
+                        log(acceptController.text);
+                        log(locationController.text);
+                      });
+                    },
                     icon: const Icon(Icons.add),
                     label: const Text('Ekle'),
                   ),

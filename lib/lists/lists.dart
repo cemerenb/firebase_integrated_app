@@ -11,10 +11,10 @@ class Item {
 
   Item({
     required this.name,
-    required this.serialNo,
-    required this.expiryDate,
-    required this.acceptDate,
-    required this.locationCode,
+    this.serialNo = '',
+    this.expiryDate = '',
+    this.acceptDate = '',
+    this.locationCode = '',
     this.piece = 0,
     this.isChecked = false,
   });
@@ -79,11 +79,10 @@ class Item {
 
 List<Item> items = itemList
     .map((String itemName) => Item(
-        name: itemName,
-        acceptDate: '',
-        expiryDate: '',
-        locationCode: '',
-        serialNo: ''))
+          name: itemName,
+        ))
     .toList();
 
-List<String> itemList = [];
+List<String> itemList = [
+  '',
+];

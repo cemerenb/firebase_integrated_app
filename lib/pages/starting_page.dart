@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_integrated_app/pages/add_item.dart';
+import 'package:firebase_integrated_app/pages/search_item_serial.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
@@ -103,7 +104,8 @@ class _StartPageState extends State<StartPage> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     GestureDetector(
-                                      onTap: scanQr,
+                                      onTap: () => Navigation.addRoute(
+                                          context, const SearchSerial()),
                                       child: Container(
                                         decoration: BoxDecoration(
                                             color: const Color.fromARGB(
