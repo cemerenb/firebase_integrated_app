@@ -25,6 +25,11 @@ class _MyAppState extends State<MyApp> {
       title: "İlk uygulamam",
       debugShowCheckedModeBanner: false,
       darkTheme: ThemeData.dark().copyWith(
+        primaryColor: Colors.white,
+        hintColor: Colors.white,
+        inputDecorationTheme:
+            const InputDecorationTheme(suffixIconColor: Colors.white),
+        buttonTheme: const ButtonThemeData(buttonColor: Colors.white),
         backgroundColor: Colors.white,
         listTileTheme: const ListTileThemeData(contentPadding: EdgeInsets.zero),
         progressIndicatorTheme:
@@ -38,7 +43,12 @@ class _MyAppState extends State<MyApp> {
       ),
       themeMode: ThemeMode.system,
       theme: ThemeData.light().copyWith(
+        hintColor: Colors.black,
+        primaryColor: Colors.black,
+        inputDecorationTheme:
+            const InputDecorationTheme(suffixIconColor: Colors.black),
         backgroundColor: Colors.white,
+        buttonTheme: const ButtonThemeData(buttonColor: Colors.black),
         progressIndicatorTheme:
             const ProgressIndicatorThemeData(color: Colors.white),
         listTileTheme: const ListTileThemeData(contentPadding: EdgeInsets.zero),
