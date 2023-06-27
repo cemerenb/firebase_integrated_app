@@ -22,7 +22,7 @@ class _AddItemState extends State<AddItem> {
   final acceptController = TextEditingController();
   final locationController = TextEditingController();
 
-  static var index = 0;
+  static var index = itemList.length - 1;
 
   Future<void> writeItem(int index, Item item) async {
     if (index > -1) {
@@ -182,7 +182,9 @@ class _AddItemState extends State<AddItem> {
                   child: ElevatedButton.icon(
                     onPressed: () {
                       int listLenght = itemList.length;
+                      log('Before Lenght : ${itemList.length}');
                       itemList.add(nameController.text);
+                      log('After Lenght : ${itemList.length}');
                       for (var i = 0; i < itemList.length; i++) {
                         log(itemList[i]);
                       }
@@ -199,6 +201,8 @@ class _AddItemState extends State<AddItem> {
                         log(expiryController.text);
                         log(acceptController.text);
                         log(locationController.text);
+                        writeItem(index, item);
+                        itemList[index];
                       });
                     },
                     icon: const Icon(Icons.add),

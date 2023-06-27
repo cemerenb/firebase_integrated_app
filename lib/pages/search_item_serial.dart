@@ -13,13 +13,6 @@ class SearchSerial extends StatefulWidget {
 }
 
 class _SearchSerialState extends State<SearchSerial> {
-  bool isVisible = false;
-  bool isCategorised = false;
-  var sum = 0;
-
-  final pricecontroller = TextEditingController();
-  final myController = TextEditingController();
-  final searchController = TextEditingController();
   final _itemsBox = Hive.box('itemsBox');
   @override
   void initState() {
@@ -30,7 +23,6 @@ class _SearchSerialState extends State<SearchSerial> {
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
-    myController.dispose();
     super.dispose();
   }
 
@@ -68,32 +60,7 @@ class _SearchSerialState extends State<SearchSerial> {
   Widget build(BuildContext context) {
     log("new frame");
     return Scaffold(
-      appBar: AppBar(
-        title: Visibility(
-            visible: isVisible,
-            child: TextFormField(
-              controller: searchController,
-              onChanged: (value) {
-                setState(() {});
-              },
-              decoration: formFieldDecoration(),
-            )),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-            child: IconButton(
-                onPressed: () {
-                  setState(() {
-                    isVisible = !isVisible;
-                  });
-                },
-                icon: const Icon(
-                  Icons.search,
-                  size: 35,
-                )),
-          )
-        ],
-      ),
+      appBar: AppBar(),
       body: homePageListView(),
       floatingActionButton: FittedBox(
         child: FloatingActionButton.extended(
@@ -108,22 +75,10 @@ class _SearchSerialState extends State<SearchSerial> {
   }
 
   ListView homePageListView() {
-    log(searchController.text);
     return ListView.builder(
-        itemCount: items.length,
+        itemCount: itemList.length - 1,
         itemBuilder: (context, index) {
           Item item = items[index];
-
-          bool shouldFilter = searchController.text.isNotEmpty;
-          if (shouldFilter) {
-            bool isMatch = item.name
-                .toLowerCase()
-                .contains(searchController.text.toLowerCase());
-            if (!isMatch) {
-              return const SizedBox();
-            }
-          }
-
           return Card(
               child: Padding(
             padding: const EdgeInsets.only(left: 15.0, top: 2, bottom: 2),
