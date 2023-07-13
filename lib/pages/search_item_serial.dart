@@ -60,7 +60,6 @@ class _SearchSerialState extends State<SearchSerial> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         title: Visibility(
           visible: isVisible,
           child: TextFormField(
@@ -113,34 +112,24 @@ class _SearchSerialState extends State<SearchSerial> {
                 child: Padding(
               padding: const EdgeInsets.only(left: 15.0, top: 2, bottom: 2),
               child: ListTile(
-                leading: (item.isChecked)
-                    ? GestureDetector(
-                        onTap: () => setState(() {
-                          item.isChecked = false;
-                          writeItem(index, item);
-                        }),
-                        child: const Icon(
-                          Icons.check_box,
-                          size: 35,
-                          color: Color.fromARGB(255, 14, 134, 18),
-                        ),
-                      )
-                    : GestureDetector(
-                        onTap: () => setState(() {
-                          item.isChecked = true;
-                          writeItem(index, item);
-                        }),
-                        child: const Icon(
-                          Icons.check_box_outline_blank,
-                          size: 35,
-                        ),
-                      ),
                 title: SizedBox(height: 20, width: 200, child: Text(item.name)),
                 subtitle: SizedBox(
                     height: 20, width: 200, child: Text('${item.piece} adet')),
-                trailing: Text(
-                  item.locationCode,
-                  style: const TextStyle(fontSize: 20),
+                trailing: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        item.acceptDate,
+                        style: const TextStyle(fontSize: 15),
+                      ),
+                      Text(
+                        item.expiryDate,
+                        style: const TextStyle(fontSize: 15),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ));

@@ -68,20 +68,16 @@ class _AcceptTermState extends State<AcceptTerm> {
                       ],
                     ),
                   ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 30.0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: Image.network(
-                            'https://avatars.githubusercontent.com/u/82811515?v=4',
-                            width: MediaQuery.of(context).size.width / 2.8,
-                          ),
-                        ),
-                      )
-                    ],
+                  const Spacer(),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 30.0, right: 10),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.network(
+                        'https://avatars.githubusercontent.com/u/82811515?v=4',
+                        width: MediaQuery.of(context).size.width / 2.8,
+                      ),
+                    ),
                   )
                 ],
               ),
@@ -131,28 +127,24 @@ class _AcceptTermState extends State<AcceptTerm> {
             children: [
               const Spacer(),
               Padding(
-                padding: const EdgeInsets.all(18.0),
-                child: SizedBox(
-                    width: 110,
-                    height: 40,
-                    child: ElevatedButton(
-                        onPressed: () {
-                          if (isChecked == false && isChecked2 == false) {
-                            setState(() {
-                              Navigation.addRoute(
-                                  context, const AddInventoryData());
-                            });
-                          } else {
-                            setState(() {
-                              showMyDialog(
-                                  context, "Lütfen koşulları onaylayın");
-                            });
-                          }
-                        },
-                        child: const Text(
-                          'İlerle',
-                          style: TextStyle(fontSize: 17),
-                        ))),
+                padding: const EdgeInsets.all(20.0),
+                child: Container(
+                  height: 60,
+                  decoration: const BoxDecoration(
+                    color: Colors.grey,
+                    shape: BoxShape.circle,
+                  ),
+                  child: MaterialButton(
+                      onPressed: () {
+                        if (!isChecked && !isChecked2) {
+                          Navigation.addRoute(
+                              context, const AddInventoryData());
+                        } else {
+                          showMyDialog(context, "Lütfen koşulları onaylayın");
+                        }
+                      },
+                      child: const Icon(Icons.arrow_forward)),
+                ),
               ),
             ],
           )

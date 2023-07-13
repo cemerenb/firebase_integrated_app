@@ -14,6 +14,7 @@ class AddItem extends StatefulWidget {
 
 class _AddItemState extends State<AddItem> {
   final _itemsBox = Hive.box('itemsBox');
+
   String? serialNoScanResult;
   String? locationScanResult;
   final nameController = TextEditingController();

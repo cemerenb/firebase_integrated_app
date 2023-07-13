@@ -20,7 +20,7 @@ class MainPageBoxStyle {
         ),
         alignment: Alignment.topCenter,
         height: random.nextInt(90) + 170,
-        width: MediaQuery.of(context).size.width/2-20,
+        width: MediaQuery.of(context).size.width / 2 - 20,
         decoration: BoxDecoration(
             gradient: LinearGradient(
                 begin: Alignment.topLeft,
@@ -32,5 +32,20 @@ class MainPageBoxStyle {
                       .withOpacity(0.4)
                 ]),
             borderRadius: BorderRadius.circular(20)));
+  }
+}
+
+class Decoration {
+  InputDecoration inputDecoration(BuildContext context) {
+    return InputDecoration(
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide:
+                const BorderSide(color: Color.fromARGB(255, 148, 146, 146))),
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Colors.black)),
+        hintText: 'Şifre',
+        contentPadding: const EdgeInsets.all(20.0));
   }
 }

@@ -3,11 +3,11 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_integrated_app/pages/accept_term.dart';
 import 'package:firebase_integrated_app/pages/add_item.dart';
+import 'package:firebase_integrated_app/pages/profile.dart';
 import 'package:firebase_integrated_app/pages/search_item_serial.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-
-import 'package:firebase_integrated_app/pages/profile_page.dart';
 
 import '../utils/navigation.dart';
 
@@ -24,6 +24,34 @@ class StartPage extends StatefulWidget {
 
 class _StartPageState extends State<StartPage> {
   String? scanResult;
+  String? profileImageUrl;
+  late bool hasProfileImage = false;
+  @override
+  void initState() {
+    super.initState();
+    setState(() {});
+    checkProfileImage();
+  }
+
+  Future<void> checkProfileImage() async {
+    Reference ref = FirebaseStorage.instance
+        .ref()
+        .child("${FirebaseAuth.instance.currentUser?.uid}.jpg");
+    try {
+      String downloadUrl = await ref.getDownloadURL();
+      if (downloadUrl.isNotEmpty) {
+        setState(() {
+          profileImageUrl = downloadUrl;
+          hasProfileImage = true;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        hasProfileImage = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,17 +68,40 @@ class _StartPageState extends State<StartPage> {
             ),
             actions: [
               MaterialButton(
-                  onPressed: () => Navigation.addRoute(context, ProfilePage()),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(150),
-                      child: Image.network(
-                          'https://avatars.githubusercontent.com/u/82811515?v=4'),
-                    ),
-                  ))
+                onPressed: () => Navigation.addRoute(
+                  context,
+                  Profile(profileImageUrl: profileImageUrl ?? ''),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(150),
+                    child: hasProfileImage
+                        ? SizedBox(
+                            height: 50,
+                            width: 50,
+                            child: CircleAvatar(
+                              radius: 40,
+                              foregroundImage:
+                                  NetworkImage(getImage().toString()),
+                            ),
+                          )
+                        : Container(
+                            height: 40,
+                            width: 40,
+                            decoration: const BoxDecoration(
+                                color: Colors.grey, shape: BoxShape.circle),
+                            child: const Icon(
+                              Icons.person,
+                              size: 30,
+                              color: Colors.black,
+                            ),
+                          ),
+                  ),
+                ),
+              ),
             ],
-          )
+          ),
         ],
         body: SingleChildScrollView(
           child: Padding(
@@ -279,5 +330,11 @@ class _StartPageState extends State<StartPage> {
     setState(() {
       this.scanResult = scanResult;
     });
+  }
+
+  getImage() {
+    checkProfileImage();
+    log(profileImageUrl.toString());
+    return profileImageUrl;
   }
 }
