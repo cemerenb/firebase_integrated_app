@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_integrated_app/pages/accept_term.dart';
 import 'package:firebase_integrated_app/pages/add_item.dart';
 import 'package:firebase_integrated_app/pages/search_item_serial.dart';
 import 'package:flutter/material.dart';
@@ -201,17 +202,30 @@ class _StartPageState extends State<StartPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width / 2.3,
-                          height: 250,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: const Color.fromARGB(255, 161, 161, 161),
-                          ),
-                          child: const Icon(
-                            Icons.add,
-                            size: 100,
-                          ),
+                        GestureDetector(
+                          onTap: () =>
+                              Navigation.addRoute(context, const AcceptTerm()),
+                          child: Container(
+                              width: MediaQuery.of(context).size.width / 2.3,
+                              height: 250,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: const Color.fromARGB(255, 161, 161, 161),
+                              ),
+                              child: const Column(
+                                children: [
+                                  Spacer(),
+                                  Icon(
+                                    Icons.shelves,
+                                    size: 100,
+                                  ),
+                                  Text(
+                                    'Stok Gir',
+                                    style: TextStyle(fontSize: 25),
+                                  ),
+                                  Spacer(),
+                                ],
+                              )),
                         ),
                         Container(
                           width: MediaQuery.of(context).size.width / 2.3,

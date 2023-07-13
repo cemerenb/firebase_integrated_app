@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_integrated_app/pages/create_account_page.dart';
 import 'package:firebase_integrated_app/pages/starting_page.dart';
 import 'package:flutter/material.dart';
+import '../utils/dialog.dart';
 import '../utils/navigation.dart';
 import '../components/password_text_field_with_validation.dart';
 
@@ -44,12 +46,12 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Log In',
+            const Text('Giriş yap',
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
             const SizedBox(
               height: 10,
             ),
-            const Text('Please sign in to continue'),
+            const Text('Devam etmek için giriş yapın'),
             const SizedBox(
               height: 30,
             ),
@@ -82,14 +84,9 @@ class _LoginPageState extends State<LoginPage> {
                   focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: const BorderSide(color: Colors.black)),
-                  hintText: 'Password',
+                  hintText: 'Şifre',
                   contentPadding: const EdgeInsets.all(20.0)),
             ),
-            if (errorMessage != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 30),
-                child: Text(errorMessage!),
-              ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 30),
               child: Center(
@@ -103,10 +100,31 @@ class _LoginPageState extends State<LoginPage> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
                   child: const Text(
-                    'Sign In',
+                    'Giriş yap',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
+              ),
+            ),
+            const Spacer(),
+            Padding(
+              padding: const EdgeInsets.all(25.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    "Hesabınız yok mu?",
+                    style: TextStyle(fontSize: 17),
+                  ),
+                  TextButton(
+                      onPressed: () {
+                        Navigation.addRoute(context, const CreateAccountPage());
+                      },
+                      child: const Text(
+                        'Kayıt ol',
+                        style: TextStyle(fontSize: 17),
+                      ))
+                ],
               ),
             )
           ],
@@ -123,7 +141,7 @@ class _LoginPageState extends State<LoginPage> {
         controller: emailController,
         textInputAction: TextInputAction.next,
         decoration: InputDecoration(
-            errorText: _validate ? "Email Can't Be Empty" : null,
+            errorText: _validate ? "Email boş olamaz" : null,
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
                 borderSide: const BorderSide(
@@ -152,17 +170,25 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       final user = usercred.user;
-      if (user?.emailVerified == true) {
+      if (user?.emailVerified == true && mounted) {
         // ignore: use_build_context_synchronously
-        return Navigation.addRoute(
-            context,
-            StartPage(
-              email: email,
-            ));
+        try {
+          Navigation.addRoute(
+              context,
+              StartPage(
+                email: email,
+              ));
+        } catch (e) {
+          Navigator.pop(context);
+        }
       } else {
         errorMessage =
-            "Please verify your email\nAn email sent to your mailbox";
-        setState(() {});
+            "Hesabınızı onaylamanız için onay maili yollandı\nLütfen gelen kutunuzu ve spamları kontrol edin ";
+
+        setState(() {
+          Navigator.pop(context);
+          showMyDialog(context, errorMessage.toString());
+        });
         user?.sendEmailVerification();
         FirebaseAuth.instance.signOut();
       }
@@ -176,6 +202,5 @@ class _LoginPageState extends State<LoginPage> {
       //ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
     // ignore: use_build_context_synchronously
-    Navigation.popRoute(context);
   }
 }

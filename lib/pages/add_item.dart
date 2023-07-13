@@ -22,15 +22,10 @@ class _AddItemState extends State<AddItem> {
   final acceptController = TextEditingController();
   final locationController = TextEditingController();
 
-  static var index = itemList.length - 1;
-
-  Future<void> writeItem(int index, Item item) async {
-    if (index > -1) {
-      await _itemsBox.put(index, item.toJson());
-    }
+  Future<void> writeItem(Item item) async {
+    int newIndex = _itemsBox.length;
+    await _itemsBox.put(newIndex, item.toJson());
   }
-
-  Item item = items[index];
 
   @override
   Widget build(BuildContext context) {
@@ -181,28 +176,23 @@ class _AddItemState extends State<AddItem> {
                   height: 50,
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      int listLenght = itemList.length;
-                      log('Before Lenght : ${itemList.length}');
-                      itemList.add(nameController.text);
-                      log('After Lenght : ${itemList.length}');
-                      for (var i = 0; i < itemList.length; i++) {
-                        log(itemList[i]);
-                      }
+                      // log('List Lenght : ${itemList.length}');
+                      // itemList[index] = nameController.text;
+
+                      final Item item = Item(
+                        name: nameController.text,
+                        serialNo: serialController.text,
+                        expiryDate: expiryController.text,
+                        acceptDate: acceptController.text,
+                        locationCode: locationController.text,
+                      );
                       setState(() {
-                        if (itemList.length > listLenght) {
-                          log('eklendi');
-                        }
-                        item.name = nameController.text;
-                        item.serialNo = serialController.text;
-                        item.expiryDate = expiryController.text;
-                        item.acceptDate = acceptController.text;
-                        item.locationCode = locationController.text;
                         log(serialController.text);
                         log(expiryController.text);
                         log(acceptController.text);
                         log(locationController.text);
-                        writeItem(index, item);
-                        itemList[index];
+
+                        writeItem(item);
                       });
                     },
                     icon: const Icon(Icons.add),

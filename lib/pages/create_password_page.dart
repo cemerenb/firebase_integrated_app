@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_integrated_app/pages/profile_details.dart';
+import 'package:firebase_integrated_app/utils/dialog.dart';
 import 'package:flutter/material.dart';
 
 import '../components/password_text_field_with_validation.dart';
@@ -26,7 +26,7 @@ class _CreatePasswordPageState extends State<CreatePasswordPage> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
-          'Create Your Account',
+          'Hesabını oluştur',
           style: Theme.of(context)
               .textTheme
               .headlineSmall
@@ -38,13 +38,13 @@ class _CreatePasswordPageState extends State<CreatePasswordPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Set a password',
+            const Text('Şifre oluştur',
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
             const SizedBox(
               height: 10,
             ),
             const Text(
-                'Please create a secure password including the following criteria below'),
+                'Lütfen aşağıdaki kriterleri karşılıyan bir şifre oluşturun'),
             const SizedBox(
               height: 30,
             ),
@@ -74,15 +74,14 @@ class _CreatePasswordPageState extends State<CreatePasswordPage> {
                         if (response == null) {
                           setState(() {
                             errorMessage =
-                                'Unkown error occured please try again';
+                                'Bir hata oluştu lütfen sonra tekrar deneyin';
                           });
                         } else {
-                          // ignore: use_build_context_synchronously
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ProfileDetails()));
+                          setState(() {
+                            showMyDialog(context,
+                                "Hesabınızı onaylamanız için onay maili yollandı\nLütfen gelen kutunuzu ve spamları kontrol edin ");
+                          });
+
                           return;
                         }
                       } on FirebaseAuthException {
@@ -94,7 +93,7 @@ class _CreatePasswordPageState extends State<CreatePasswordPage> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
                   child: const Text(
-                    'Creat Account',
+                    'Hesap oluştur',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),

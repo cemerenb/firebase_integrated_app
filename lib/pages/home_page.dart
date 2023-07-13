@@ -14,19 +14,15 @@ class HomePage extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             children: [
-              Text(
-                'Welcome',
-                style: Theme.of(context).textTheme.displayMedium,
+              Image.asset(
+                'assets/img/pirim.png',
+                width: MediaQuery.of(context).size.width * 0.8,
               ),
               const SizedBox(
                 height: 50,
               ),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 30),
-                child: Center(
-                  child: Text(
-                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Maecenas ultricies mi eget mauris. Sem et tortor consequat id porta. Pretium aenean pharetra magna ac placerat. Mauris vitae ultricies leo integer.'),
-                ),
               ),
               const SizedBox(height: 50),
               MaterialButton(
@@ -38,13 +34,14 @@ class HomePage extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
                   child: const Text(
-                    'Register',
+                    'Kayıt ol',
                     style: TextStyle(color: Colors.white),
                   )),
               const SizedBox(
                 height: 80,
               ),
-              const Text('Already have an account?'),
+              const Spacer(),
+              const Text('Zaten hesabınız var mı?'),
               const SizedBox(
                 height: 20,
               ),
@@ -57,7 +54,7 @@ class HomePage extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
                   child: const Text(
-                    'Log In',
+                    'Giriş yap',
                     style: TextStyle(color: Colors.white),
                   )),
               const SizedBox(

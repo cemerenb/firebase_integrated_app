@@ -11,7 +11,7 @@ class ProfileDetails extends StatefulWidget {
 
 void pickUploadImage() async {
   final image = await ImagePicker().pickImage(
-    source: ImageSource.gallery,
+    source: ImageSource.camera,
     maxHeight: 512,
     maxWidth: 512,
     imageQuality: 75,
