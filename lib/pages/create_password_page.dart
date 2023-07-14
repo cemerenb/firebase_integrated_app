@@ -8,6 +8,7 @@ import '../services/auth.dart';
 class CreatePasswordPage extends StatefulWidget {
   final String username;
   final String email;
+  final bool isAdmin = false;
 
   const CreatePasswordPage(
       {super.key, required this.username, required this.email});
@@ -69,7 +70,10 @@ class _CreatePasswordPageState extends State<CreatePasswordPage> {
                       final password = textFieldKey.currentState?.getPassword();
                       try {
                         final response = await AuthService.createPerson(
-                            widget.username, widget.email, password ?? '');
+                            widget.username,
+                            widget.email,
+                            password ?? '',
+                            widget.isAdmin);
 
                         if (response == null) {
                           setState(() {

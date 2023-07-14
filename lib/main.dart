@@ -51,7 +51,7 @@ class _MyAppState extends State<MyApp> {
             onPrimary: Color.fromARGB(255, 255, 255, 255),
             onSecondary: Colors.white,
             onSurface: Colors.white,
-            primary: Color.fromARGB(255, 112, 112, 112),
+            primary: Color.fromARGB(255, 161, 36, 36),
             secondary: Colors.white,
             surface: Colors.white),
       ),

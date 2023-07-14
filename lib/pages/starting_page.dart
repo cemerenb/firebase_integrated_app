@@ -1,20 +1,22 @@
 import 'dart:developer';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_integrated_app/pages/accept_term.dart';
 import 'package:firebase_integrated_app/pages/add_item.dart';
 import 'package:firebase_integrated_app/pages/profile.dart';
 import 'package:firebase_integrated_app/pages/search_item_serial.dart';
+import 'package:firebase_integrated_app/utils/is_admin.dart';
+import 'package:firebase_integrated_app/utils/scan.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 import '../utils/navigation.dart';
 
 // ignore: must_be_immutable
 class StartPage extends StatefulWidget {
   final String email;
-  StartPage({super.key, required this.email});
+  late bool isAdmin = false;
+
+  StartPage({super.key, required this.email, required this.isAdmin});
   final auth = FirebaseAuth.instance;
   final bool isverify = false;
   User? user;
@@ -29,8 +31,9 @@ class _StartPageState extends State<StartPage> {
   @override
   void initState() {
     super.initState();
-    setState(() {});
+
     checkProfileImage();
+    setState(() {});
   }
 
   Future<void> checkProfileImage() async {
@@ -54,287 +57,302 @@ class _StartPageState extends State<StartPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: NestedScrollView(
-        floatHeaderSlivers: true,
-        headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          SliverAppBar(
-            automaticallyImplyLeading: false,
-            floating: true,
-            snap: true,
-            title: Text(
-              "Ana Sayfa",
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            actions: [
-              MaterialButton(
-                onPressed: () => Navigation.addRoute(
-                  context,
-                  Profile(profileImageUrl: profileImageUrl ?? ''),
+    return WillPopScope(
+        onWillPop: showExitPopup,
+        child: Scaffold(
+          body: NestedScrollView(
+            floatHeaderSlivers: true,
+            headerSliverBuilder: (context, innerBoxIsScrolled) => [
+              SliverAppBar(
+                automaticallyImplyLeading: false,
+                floating: true,
+                snap: true,
+                title: Text(
+                  "Ana Sayfa",
+                  style: Theme.of(context).textTheme.headlineSmall,
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(150),
-                    child: hasProfileImage
-                        ? SizedBox(
-                            height: 50,
-                            width: 50,
-                            child: CircleAvatar(
-                              radius: 40,
-                              foregroundImage:
-                                  NetworkImage(getImage().toString()),
-                            ),
-                          )
-                        : Container(
-                            height: 40,
-                            width: 40,
-                            decoration: const BoxDecoration(
-                                color: Colors.grey, shape: BoxShape.circle),
-                            child: const Icon(
-                              Icons.person,
-                              size: 30,
-                              color: Colors.black,
-                            ),
-                          ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0, bottom: 5),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        GestureDetector(
-                          onTap: () =>
-                              Navigation.addRoute(context, const AddItem()),
-                          child: Container(
-                              width: MediaQuery.of(context).size.width / 2.3,
-                              height: 250,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: const Color.fromARGB(255, 161, 161, 161),
-                              ),
-                              child: const Column(
-                                children: [
-                                  Spacer(),
-                                  Icon(
-                                    Icons.add,
-                                    size: 100,
-                                  ),
-                                  Text(
-                                    'Ürün Ekle',
-                                    style: TextStyle(fontSize: 25),
-                                  ),
-                                  Spacer(),
-                                ],
-                              )),
-                        ),
-
-                        //Scan qr and barcode button
-
-                        Container(
-                            width: MediaQuery.of(context).size.width / 2.3,
-                            height: 250,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: Colors.transparent),
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () => Navigation.addRoute(
-                                          context, const SearchSerial()),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                            color: const Color.fromARGB(
-                                                255, 161, 161, 161),
-                                            borderRadius:
-                                                BorderRadius.circular(15)),
-                                        height: 120,
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                4.9,
-                                        child: const Column(
-                                          children: [
-                                            Spacer(),
-                                            Padding(
-                                              padding: EdgeInsets.all(10.0),
-                                              child: Text(
-                                                'Seri No ile Ara',
-                                                style: TextStyle(fontSize: 20),
-                                              ),
-                                            ),
-                                            Spacer(),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: scanQr,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                            color: const Color.fromARGB(
-                                                255, 161, 161, 161),
-                                            borderRadius:
-                                                BorderRadius.circular(15)),
-                                        height: 120,
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                4.9,
-                                        child: const Column(
-                                          children: [
-                                            Spacer(),
-                                            Icon(
-                                              Icons.qr_code_2_outlined,
-                                              size: 50,
-                                            ),
-                                            Text(
-                                              'QR Tara',
-                                              style: TextStyle(fontSize: 20),
-                                            ),
-                                            Spacer(),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                GestureDetector(
-                                  onTap: scanBarcode,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(top: 10),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          color: const Color.fromARGB(
-                                              255, 161, 161, 161),
-                                          borderRadius:
-                                              BorderRadius.circular(15)),
-                                      height: 120,
-                                      width: MediaQuery.of(context).size.width /
-                                          2.3,
-                                      child: const Column(
-                                        children: [
-                                          Spacer(),
-                                          Icon(
-                                            Icons.camera_alt_outlined,
-                                            size: 50,
-                                          ),
-                                          Text(
-                                            'Barkod Tara',
-                                            style: TextStyle(fontSize: 20),
-                                          ),
-                                          Spacer()
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            )),
-                      ],
+                actions: [
+                  MaterialButton(
+                    onPressed: () => Navigation.addRoute(
+                      context,
+                      Profile(profileImageUrl: profileImageUrl ?? ''),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        GestureDetector(
-                          onTap: () =>
-                              Navigation.addRoute(context, const AcceptTerm()),
-                          child: Container(
-                              width: MediaQuery.of(context).size.width / 2.3,
-                              height: 250,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: const Color.fromARGB(255, 161, 161, 161),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(150),
+                        child: hasProfileImage
+                            ? SizedBox(
+                                height: 50,
+                                width: 50,
+                                child: CircleAvatar(
+                                  radius: 40,
+                                  foregroundImage:
+                                      NetworkImage(getImage().toString()),
+                                ),
+                              )
+                            : Container(
+                                height: 40,
+                                width: 40,
+                                decoration: const BoxDecoration(
+                                    color: Colors.grey, shape: BoxShape.circle),
+                                child: const Icon(
+                                  Icons.person,
+                                  size: 30,
+                                  color: Colors.black,
+                                ),
                               ),
-                              child: const Column(
-                                children: [
-                                  Spacer(),
-                                  Icon(
-                                    Icons.shelves,
-                                    size: 100,
-                                  ),
-                                  Text(
-                                    'Stok Gir',
-                                    style: TextStyle(fontSize: 25),
-                                  ),
-                                  Spacer(),
-                                ],
-                              )),
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width / 2.3,
-                          height: 250,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: const Color.fromARGB(255, 161, 161, 161),
-                          ),
-                          child: const Icon(
-                            Icons.add,
-                            size: 100,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ],
               ),
+            ],
+            body: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0, bottom: 5),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            GestureDetector(
+                              onTap: () =>
+                                  Navigation.addRoute(context, const AddItem()),
+                              child: Container(
+                                  width:
+                                      MediaQuery.of(context).size.width / 2.3,
+                                  height: 250,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: const Color.fromARGB(
+                                        255, 161, 161, 161),
+                                  ),
+                                  child: const Column(
+                                    children: [
+                                      Spacer(),
+                                      Icon(
+                                        Icons.add,
+                                        size: 100,
+                                      ),
+                                      Text(
+                                        'Ürün Ekle',
+                                        style: TextStyle(fontSize: 25),
+                                      ),
+                                      Spacer(),
+                                    ],
+                                  )),
+                            ),
+
+                            //Scan qr and barcode button
+
+                            Container(
+                                width: MediaQuery.of(context).size.width / 2.3,
+                                height: 250,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: Colors.transparent),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () => Navigation.addRoute(
+                                              context, const SearchSerial()),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                color: const Color.fromARGB(
+                                                    255, 161, 161, 161),
+                                                borderRadius:
+                                                    BorderRadius.circular(15)),
+                                            height: 120,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                4.9,
+                                            child: const Column(
+                                              children: [
+                                                Spacer(),
+                                                Padding(
+                                                  padding: EdgeInsets.all(10.0),
+                                                  child: Text(
+                                                    'Seri No ile Ara',
+                                                    style:
+                                                        TextStyle(fontSize: 20),
+                                                  ),
+                                                ),
+                                                Spacer(),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        GestureDetector(
+                                          onTap: scanQR,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                color: const Color.fromARGB(
+                                                    255, 161, 161, 161),
+                                                borderRadius:
+                                                    BorderRadius.circular(15)),
+                                            height: 120,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                4.9,
+                                            child: const Column(
+                                              children: [
+                                                Spacer(),
+                                                Icon(
+                                                  Icons.qr_code_2_outlined,
+                                                  size: 50,
+                                                ),
+                                                Text(
+                                                  'QR Tara',
+                                                  style:
+                                                      TextStyle(fontSize: 20),
+                                                ),
+                                                Spacer(),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    GestureDetector(
+                                      onTap: scanBarcode,
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(top: 10),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              color: const Color.fromARGB(
+                                                  255, 161, 161, 161),
+                                              borderRadius:
+                                                  BorderRadius.circular(15)),
+                                          height: 120,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              2.3,
+                                          child: const Column(
+                                            children: [
+                                              Spacer(),
+                                              Icon(
+                                                Icons.camera_alt_outlined,
+                                                size: 50,
+                                              ),
+                                              Text(
+                                                'Barkod Tara',
+                                                style: TextStyle(fontSize: 20),
+                                              ),
+                                              Spacer()
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: () => Navigation.addRoute(
+                                  context, const AcceptTerm()),
+                              child: Container(
+                                  width:
+                                      MediaQuery.of(context).size.width / 2.3,
+                                  height: 250,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: const Color.fromARGB(
+                                        255, 161, 161, 161),
+                                  ),
+                                  child: const Column(
+                                    children: [
+                                      Spacer(),
+                                      Icon(
+                                        Icons.shelves,
+                                        size: 100,
+                                      ),
+                                      Text(
+                                        'Stok Gir',
+                                        style: TextStyle(fontSize: 25),
+                                      ),
+                                      Spacer(),
+                                    ],
+                                  )),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 15.0),
+                              child: Visibility(
+                                visible: isAdmin,
+                                child: Container(
+                                  width:
+                                      MediaQuery.of(context).size.width / 2.3,
+                                  height: 250,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: const Color.fromARGB(
+                                        255, 161, 161, 161),
+                                  ),
+                                  child: const Icon(
+                                    Icons.add,
+                                    size: 100,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Future scanBarcode() async {
-    log('barcoda girdi');
-    String scanResult;
-    try {
-      scanResult = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', 'İptal', true, ScanMode.BARCODE);
-    } catch (e) {
-      scanResult = "Bir hata oluştu!";
-    }
-    if (!mounted) return;
-    setState(() {
-      this.scanResult = scanResult;
-    });
-  }
-
-  Future scanQr() async {
-    log('barcoda girdi');
-    String scanResult;
-    try {
-      scanResult = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', 'İptal', true, ScanMode.QR);
-    } catch (e) {
-      scanResult = "Bir hata oluştu!";
-    }
-    if (!mounted) return;
-    setState(() {
-      this.scanResult = scanResult;
-    });
+        ));
   }
 
   getImage() {
     checkProfileImage();
     log(profileImageUrl.toString());
     return profileImageUrl;
+  }
+
+  Future<bool> showExitPopup() async {
+    return await showDialog(
+          //show confirm dialogue
+          //the return value will be from "Yes" or "No" options
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Çıkış yap'),
+            content: const Text('Uygulamadan çıkmak istiyor musunuz?'),
+            actions: [
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                //return false when click on "NO"
+                child: const Text('No'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                //return true when click on "Yes"
+                child: const Text('Yes'),
+              ),
+            ],
+          ),
+        ) ??
+        false; //if showDialouge had returned null, then return false
   }
 }

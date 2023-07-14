@@ -1,8 +1,10 @@
+import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_integrated_app/pages/create_account_page.dart';
 import 'package:firebase_integrated_app/pages/starting_page.dart';
 import 'package:flutter/material.dart';
 import '../utils/dialog.dart';
+import '../utils/is_admin.dart';
 import '../utils/navigation.dart';
 import '../components/password_text_field_with_validation.dart';
 
@@ -156,13 +158,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future signIn(String email, String password, BuildContext context) async {
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: ((context) => const Center(
-              child: CircularProgressIndicator(),
-            )));
-
     try {
       final usercred = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email.trim(),
@@ -173,29 +168,32 @@ class _LoginPageState extends State<LoginPage> {
       if (user?.emailVerified == true && mounted) {
         // ignore: use_build_context_synchronously
         try {
-          Navigation.addRoute(
-              context,
-              StartPage(
-                email: email,
-              ));
-        } catch (e) {
-          Navigator.pop(context);
-        }
+          bool isAdmin = getAdminStatus(FirebaseAuth.instance.currentUser!.uid);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => StartPage(
+                      email: email,
+                      isAdmin: isAdmin,
+                    )),
+          );
+        } catch (e) {}
       } else {
         errorMessage =
             "Hesabınızı onaylamanız için onay maili yollandı\nLütfen gelen kutunuzu ve spamları kontrol edin ";
 
-        setState(() {
-          Navigator.pop(context);
-          showMyDialog(context, errorMessage.toString());
-        });
+        setState(() {});
+        showMyDialog(context, errorMessage.toString());
         user?.sendEmailVerification();
         FirebaseAuth.instance.signOut();
       }
     } catch (e) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {
-            errorMessage = e.toString();
-          }));
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        log(e.toString());
+        errorMessage = e.toString();
+        showMyDialog(context, errorMessage.toString());
+        setState(() {});
+      });
 
       // Find the ScaffoldMessenger in the widget tree
 // and use it to show a SnackBar.

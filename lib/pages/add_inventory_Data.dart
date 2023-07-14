@@ -2,8 +2,8 @@ import 'dart:developer';
 
 import 'package:firebase_integrated_app/pages/add_inventory_Data_search_result.dart';
 import 'package:firebase_integrated_app/utils/navigation.dart';
+import 'package:firebase_integrated_app/utils/scan.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 class AddInventoryData extends StatefulWidget {
   const AddInventoryData({super.key});
@@ -32,7 +32,7 @@ class _AddInventoryDataState extends State<AddInventoryData> {
               decoration: InputDecoration(
                   suffixIcon: IconButton(
                       onPressed: () async {
-                        await scanBarcode();
+                        scanResult = await scanBarcode();
                         if (scanResult != null) {
                           log(scanResult.toString());
                           serialController.text = scanResult.toString();
@@ -81,21 +81,6 @@ class _AddInventoryDataState extends State<AddInventoryData> {
         ],
       ),
     );
-  }
-
-  Future scanBarcode() async {
-    log('barcoda girdi');
-    String scanResult;
-    try {
-      scanResult = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', 'İptal', true, ScanMode.BARCODE);
-    } catch (e) {
-      scanResult = "Bir hata oluştu!";
-    }
-    if (!mounted) return;
-    setState(() {
-      this.scanResult = scanResult;
-    });
   }
 
   Future<void> _showMyDialog() async {

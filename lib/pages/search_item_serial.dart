@@ -16,7 +16,7 @@ class _SearchSerialState extends State<SearchSerial> {
   final priceController = TextEditingController();
   final myController = TextEditingController();
   final searchController = TextEditingController();
-
+  final serialController = TextEditingController();
   final _itemsBox = Hive.box('itemsBox');
   List<Item> items = [];
 
@@ -141,7 +141,7 @@ class _SearchSerialState extends State<SearchSerial> {
   InputDecoration formFieldDecoration() {
     return InputDecoration(
         border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(8),
             borderSide:
                 const BorderSide(color: Color.fromARGB(255, 148, 146, 146))),
         focusedBorder: OutlineInputBorder(
@@ -149,7 +149,7 @@ class _SearchSerialState extends State<SearchSerial> {
             borderSide: const BorderSide(
               color: Color.fromARGB(0, 129, 129, 129),
             )),
-        hintText: 'Search',
+        hintText: 'Ara',
         contentPadding: const EdgeInsets.all(5.0));
   }
 
