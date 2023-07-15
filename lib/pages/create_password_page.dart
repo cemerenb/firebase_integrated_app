@@ -1,5 +1,9 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_integrated_app/pages/login_page.dart';
 import 'package:firebase_integrated_app/utils/dialog.dart';
+import 'package:firebase_integrated_app/utils/navigation.dart';
 import 'package:flutter/material.dart';
 
 import '../components/password_text_field_with_validation.dart';
@@ -8,14 +12,22 @@ import '../services/auth.dart';
 class CreatePasswordPage extends StatefulWidget {
   final String username;
   final String email;
+  final String name;
+  final String idno;
   final bool isAdmin = false;
 
   const CreatePasswordPage(
-      {super.key, required this.username, required this.email});
+      {super.key,
+      required this.username,
+      required this.email,
+      required this.name,
+      required this.idno});
 
   @override
   State<CreatePasswordPage> createState() => _CreatePasswordPageState();
 }
+
+String name = '';
 
 class _CreatePasswordPageState extends State<CreatePasswordPage> {
   GlobalKey<PasswordTextFieldWithValidationState> textFieldKey =
@@ -73,17 +85,32 @@ class _CreatePasswordPageState extends State<CreatePasswordPage> {
                             widget.username,
                             widget.email,
                             password ?? '',
-                            widget.isAdmin);
+                            widget.isAdmin,
+                            widget.name,
+                            widget.idno);
+                        log('person created');
+                        final usercred = await FirebaseAuth.instance
+                            .signInWithEmailAndPassword(
+                          email: widget.email.trim(),
+                          password: password ?? '',
+                        );
+                        log('Verification mail send');
+                        final user = usercred.user;
+                        user?.sendEmailVerification();
+                        FirebaseAuth.instance.signOut();
 
                         if (response == null) {
+                          errorMessage =
+                              'Bir hata oluştu lütfen sonra tekrar deneyin';
                           setState(() {
-                            errorMessage =
-                                'Bir hata oluştu lütfen sonra tekrar deneyin';
+                            showMyDialog(context, errorMessage.toString());
                           });
+                          log(errorMessage.toString());
                         } else {
                           setState(() {
                             showMyDialog(context,
                                 "Hesabınızı onaylamanız için onay maili yollandı\nLütfen gelen kutunuzu ve spamları kontrol edin ");
+                            Navigation.addRoute(context, const LoginPage());
                           });
 
                           return;

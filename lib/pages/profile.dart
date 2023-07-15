@@ -1,4 +1,8 @@
+import 'dart:developer';
 import 'dart:io';
+import 'package:firebase_integrated_app/pages/about.dart';
+import 'package:firebase_integrated_app/pages/help.dart';
+import 'package:firebase_integrated_app/utils/get_data_firestore.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,17 +23,21 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   late bool hasProfileImage = false;
   String profileImageUrl = "";
+  var user = FirebaseAuth.instance.currentUser;
+  var email = FirebaseAuth.instance.currentUser?.email.toString();
+  var uid = FirebaseAuth.instance.currentUser!.uid.toString();
 
   @override
   void initState() {
     super.initState();
+    getUserName(uid);
+    getName(uid);
+    getIdNo(uid);
     checkProfileImage();
   }
 
   Future<void> checkProfileImage() async {
-    Reference ref = FirebaseStorage.instance
-        .ref()
-        .child("${FirebaseAuth.instance.currentUser?.uid}.jpg");
+    Reference ref = FirebaseStorage.instance.ref().child("${user?.uid}.jpg");
     try {
       String downloadUrl = await ref.getDownloadURL();
       if (downloadUrl.isNotEmpty) {
@@ -166,21 +174,6 @@ class _ProfileState extends State<Profile> {
             },
             icon: const Icon(Icons.arrow_back)),
         title: const Text('Profilim'),
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.logout,
-            ),
-            onPressed: () async {
-              AuthService.signOut();
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (builder) => const LoginPage()),
-                (route) => false,
-              );
-            },
-          )
-        ],
       ),
       body: Center(
         child: Column(
@@ -202,7 +195,7 @@ class _ProfileState extends State<Profile> {
                                 imageUrl: profileImageUrl,
                                 placeholder: (context, url) =>
                                     const CircularProgressIndicator(
-                                  strokeWidth: 15,
+                                  strokeWidth: 20,
                                   color: Colors.black,
                                 ),
                                 height: 50,
@@ -222,9 +215,194 @@ class _ProfileState extends State<Profile> {
                               ),
                       ))),
             ),
+            Center(
+              child: Text(
+                name.toString(),
+                style: const TextStyle(fontSize: 20),
+              ),
+            ),
+            Center(
+              child: Text(
+                "@${userName.toString()}",
+                style: const TextStyle(fontSize: 15),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 30, bottom: 10),
+              child: Container(
+                color: const Color.fromARGB(97, 168, 168, 168),
+                height: 1,
+                width: MediaQuery.of(context).size.width * 0.8,
+              ),
+            ),
+            MaterialButton(
+              onPressed: () {},
+              child: SizedBox(
+                height: 70,
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    const Icon(
+                      Icons.settings_outlined,
+                      size: 30,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 20),
+                      child: Text(
+                        'Ayarlar',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    const Spacer(),
+                    Container(
+                        height: 35,
+                        width: 35,
+                        decoration: BoxDecoration(
+                            color: const Color.fromARGB(97, 168, 168, 168),
+                            borderRadius: BorderRadius.circular(9)),
+                        child: const Icon(Icons.keyboard_arrow_right))
+                  ],
+                ),
+              ),
+            ),
+            MaterialButton(
+              onPressed: () {
+                Navigation.addRoute(context, const About());
+              },
+              child: SizedBox(
+                height: 70,
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    const Icon(
+                      Icons.info_outline,
+                      size: 30,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 20),
+                      child: Text(
+                        'Hakkında',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    const Spacer(),
+                    Container(
+                        height: 35,
+                        width: 35,
+                        decoration: BoxDecoration(
+                            color: const Color.fromARGB(97, 168, 168, 168),
+                            borderRadius: BorderRadius.circular(9)),
+                        child: const Icon(Icons.keyboard_arrow_right))
+                  ],
+                ),
+              ),
+            ),
+            MaterialButton(
+              onPressed: () {
+                Navigation.addRoute(context, const Help());
+              },
+              child: Container(
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(10)),
+                height: 70,
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    const Icon(
+                      Icons.help_outline,
+                      size: 30,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 20),
+                      child: Text(
+                        'Yardım',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    const Spacer(),
+                    Container(
+                        height: 35,
+                        width: 35,
+                        decoration: BoxDecoration(
+                            color: const Color.fromARGB(97, 168, 168, 168),
+                            borderRadius: BorderRadius.circular(9)),
+                        child: const Icon(Icons.keyboard_arrow_right))
+                  ],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 10, bottom: 10),
+              child: Container(
+                color: const Color.fromARGB(97, 168, 168, 168),
+                height: 1,
+                width: MediaQuery.of(context).size.width * 0.8,
+              ),
+            ),
+            MaterialButton(
+              onPressed: () async {
+                AuthService.signOut();
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (builder) => const LoginPage()),
+                  (route) => false,
+                );
+              },
+              child: SizedBox(
+                height: 70,
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    const Icon(
+                      Icons.logout_outlined,
+                      size: 30,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 20),
+                      child: Text(
+                        'Çıkış Yap',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    const Spacer(),
+                    Container(
+                        height: 35,
+                        width: 35,
+                        decoration: BoxDecoration(
+                            color: const Color.fromARGB(187, 231, 113, 113),
+                            borderRadius: BorderRadius.circular(9)),
+                        child: const Icon(Icons.keyboard_arrow_right))
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  TextField inputDecoration(String hintText) {
+    log(hintText);
+    return TextField(
+      enabled: false,
+      keyboardType: TextInputType.emailAddress,
+      textInputAction: TextInputAction.next,
+      decoration: InputDecoration(
+          disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide:
+                  const BorderSide(color: Color.fromARGB(255, 66, 66, 66))),
+          hintText: hintText,
+          contentPadding: const EdgeInsets.all(15.0)),
     );
   }
 }

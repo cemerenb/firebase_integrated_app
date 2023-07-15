@@ -3,7 +3,7 @@ import 'dart:developer';
 
 class Validators {
   static String? emailValidator(String? mail) {
-    String mailErrorMessage = 'Invalid email';
+    String mailErrorMessage = 'Geçersiz email';
     if (mail == null) {
       return mailErrorMessage;
     }
@@ -32,7 +32,7 @@ class Validators {
   }
 
   static String? usernameValidator(String? username) {
-    const invalidUsernameMessage = 'Invalid message';
+    const invalidUsernameMessage = 'Geçersiz kullanıcı adı';
     if (username == null) {
       return invalidUsernameMessage;
     }
@@ -43,6 +43,37 @@ class Validators {
 
     if (username.contains(' ')) {
       return invalidUsernameMessage;
+    }
+
+    return null;
+  }
+
+  static String? nameValidator(String? username) {
+    const invalidUsernameMessage = 'Geçersiz kullanıcı adı';
+    if (username == null) {
+      return invalidUsernameMessage;
+    }
+
+    if (username.isEmpty) {
+      return invalidUsernameMessage;
+    }
+
+    return null;
+  }
+
+  static String? idNoValidator(String? idNo) {
+    const invalidIdNoMessage = 'Geçersiz kimlik numarası';
+    if (idNo == null) {
+      return invalidIdNoMessage;
+    }
+
+    if (idNo.isEmpty) {
+      return invalidIdNoMessage;
+    }
+
+    final numericRegex = RegExp(r'^[0-9]+$');
+    if (!numericRegex.hasMatch(idNo)) {
+      return invalidIdNoMessage;
     }
 
     return null;

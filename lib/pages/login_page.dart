@@ -4,7 +4,7 @@ import 'package:firebase_integrated_app/pages/create_account_page.dart';
 import 'package:firebase_integrated_app/pages/starting_page.dart';
 import 'package:flutter/material.dart';
 import '../utils/dialog.dart';
-import '../utils/is_admin.dart';
+import '../utils/get_data_firestore.dart';
 import '../utils/navigation.dart';
 import '../components/password_text_field_with_validation.dart';
 
@@ -138,22 +138,26 @@ class _LoginPageState extends State<LoginPage> {
   Padding _usernameTextField() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20.0),
-      child: TextField(
-        keyboardType: TextInputType.emailAddress,
-        controller: emailController,
-        textInputAction: TextInputAction.next,
-        decoration: InputDecoration(
-            errorText: _validate ? "Email boş olamaz" : null,
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(
-                    color: Color.fromARGB(255, 148, 146, 146))),
-            focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: Colors.black)),
-            hintText: 'Email',
-            contentPadding: const EdgeInsets.all(20.0)),
-      ),
+      child: textInputDecoration(),
+    );
+  }
+
+  TextField textInputDecoration() {
+    return TextField(
+      keyboardType: TextInputType.emailAddress,
+      controller: emailController,
+      textInputAction: TextInputAction.next,
+      decoration: InputDecoration(
+          errorText: _validate ? "Email boş olamaz" : null,
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide:
+                  const BorderSide(color: Color.fromARGB(255, 148, 146, 146))),
+          focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: Colors.black)),
+          hintText: 'Email',
+          contentPadding: const EdgeInsets.all(20.0)),
     );
   }
 
@@ -177,6 +181,7 @@ class _LoginPageState extends State<LoginPage> {
                       isAdmin: isAdmin,
                     )),
           );
+          // ignore: empty_catches
         } catch (e) {}
       } else {
         errorMessage =

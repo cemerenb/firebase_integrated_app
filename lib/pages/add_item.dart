@@ -1,20 +1,23 @@
 import 'dart:developer';
-import 'package:firebase_integrated_app/lists/lists.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:firebase_integrated_app/utils/dialog.dart';
+import 'package:firebase_integrated_app/utils/get_data_firestore.dart';
 import 'package:pattern_formatter/pattern_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import '../services/auth.dart';
+import 'package:time_machine/time_machine.dart';
 
+// ignore: must_be_immutable
 class AddItem extends StatefulWidget {
-  const AddItem({super.key});
+  late String lastModifiedUser;
+
+  AddItem({super.key, required this.lastModifiedUser});
 
   @override
   State<AddItem> createState() => _AddItemState();
 }
 
 class _AddItemState extends State<AddItem> {
-  final _itemsBox = Hive.box('itemsBox');
-
   String? serialNoScanResult;
   String? locationScanResult;
   final nameController = TextEditingController();
@@ -22,10 +25,13 @@ class _AddItemState extends State<AddItem> {
   final expiryController = TextEditingController();
   final acceptController = TextEditingController();
   final locationController = TextEditingController();
+  late bool isAdded = false;
 
-  Future<void> writeItem(Item item) async {
-    int newIndex = _itemsBox.length;
-    await _itemsBox.put(newIndex, item.toJson());
+  @override
+  void initState() {
+    super.initState();
+
+    log(widget.lastModifiedUser);
   }
 
   @override
@@ -176,25 +182,34 @@ class _AddItemState extends State<AddItem> {
                 child: SizedBox(
                   height: 50,
                   child: ElevatedButton.icon(
-                    onPressed: () {
-                      // log('List Lenght : ${itemList.length}');
-                      // itemList[index] = nameController.text;
-
-                      final Item item = Item(
-                        name: nameController.text,
-                        serialNo: serialController.text,
-                        expiryDate: expiryController.text,
-                        acceptDate: acceptController.text,
-                        locationCode: locationController.text,
-                      );
-                      setState(() {
-                        log(serialController.text);
-                        log(expiryController.text);
-                        log(acceptController.text);
-                        log(locationController.text);
-
-                        writeItem(item);
-                      });
+                    onPressed: () async {
+                      String lastModifiedTime = Instant.now()
+                          .inLocalZone()
+                          .toString('yyyy-MM-dd HH:mm');
+                      log(lastModifiedTime);
+                      log("User: ${widget.lastModifiedUser}");
+                      isAdded = await AuthService.addNewItem(
+                          serialController.text,
+                          expiryController.text,
+                          acceptController.text,
+                          locationController.text,
+                          nameController.text,
+                          piece,
+                          isChecked,
+                          lastModifiedTime,
+                          widget.lastModifiedUser);
+                      if (isAdded && mounted) {
+                        log(isAdded.toString());
+                        showMyDialog(context, 'Ürün başarıyla eklendi');
+                        serialController.text = '';
+                        expiryController.text = '';
+                        acceptController.text = '';
+                        locationController.text = '';
+                        nameController.text = '';
+                      } else {
+                        showMyDialog(context, 'Bir hata oluştu');
+                      }
+                      setState(() {});
                     },
                     icon: const Icon(Icons.add),
                     label: const Text('Ekle'),
