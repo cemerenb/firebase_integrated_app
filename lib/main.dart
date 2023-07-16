@@ -1,14 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_integrated_app/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:pirim_depo/pages/login_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await Hive.initFlutter();
-  await Hive.openBox('itemsBox');
   runApp(const MyApp());
 }
 
