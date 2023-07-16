@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
-Future scanBarcode() async {
+scanBarcode() async {
   log('barcoda girdi');
   String scanResult;
   try {
@@ -15,8 +15,8 @@ Future scanBarcode() async {
   return scanResult = scanResult;
 }
 
-Future scanQR() async {
-  log('barcoda girdi');
+scanQR() async {
+  log('qr girdi');
   String scanResult;
   try {
     scanResult = await FlutterBarcodeScanner.scanBarcode(
@@ -24,6 +24,6 @@ Future scanQR() async {
   } catch (e) {
     scanResult = "Bir hata oluştu!";
   }
-
+  log(scanResult);
   return scanResult = scanResult;
 }

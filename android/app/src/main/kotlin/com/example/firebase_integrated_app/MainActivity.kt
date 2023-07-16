@@ -1,4 +1,4 @@
-package com.cemerenb.firebase_integrated_app
+package com.cemerenb.pirim_depo
 
 import io.flutter.embedding.android.FlutterActivity
 

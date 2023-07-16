@@ -30,27 +30,30 @@ class _SearchResultState extends State<SearchResult> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text(widget.itemName),
       ),
-      body: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Column(
-            children: [
-              searchResultItem(context, 'Seri No', widget.serialNo),
-              searchResultItem(
-                  context, 'Son Kullanma Tarihi', widget.expiryDate),
-              searchResultItem(context, 'Kabul Tarihi', widget.acceptDate),
-              searchResultItem(context, 'Adet', widget.piece),
-              searchResultItem(context, 'Lokasyon Kodu', widget.locationCode),
-              searchResultItem(context, 'Son Değişiklik Yapan Kullanıcı',
-                  widget.lastModifiedUser),
-              searchResultItem(
-                  context, 'Son Değişiklik Tarihi', widget.lastModifiedTime),
-            ],
-          ),
-        ],
+      body: SingleChildScrollView(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Column(
+              children: [
+                searchResultItem(context, 'Seri No', widget.serialNo),
+                searchResultItem(
+                    context, 'Son Kullanma Tarihi', widget.expiryDate),
+                searchResultItem(context, 'Kabul Tarihi', widget.acceptDate),
+                searchResultItem(context, 'Lokasyon Kodu', widget.locationCode),
+                searchResultItem(context, 'Son Değişiklik Yapan Kullanıcı',
+                    widget.lastModifiedUser),
+                searchResultItem(
+                    context, 'Son Değişiklik Tarihi', widget.lastModifiedTime),
+                searchResultItem(context, 'Adet', widget.piece),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -58,7 +61,6 @@ class _SearchResultState extends State<SearchResult> {
   SizedBox searchResultItem(BuildContext context, data, text) {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.8,
-      height: MediaQuery.of(context).size.height * 0.11,
       child: Column(
         children: [
           Padding(

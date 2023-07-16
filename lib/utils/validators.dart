@@ -61,24 +61,6 @@ class Validators {
     return null;
   }
 
-  static String? idNoValidator(String? idNo) {
-    const invalidIdNoMessage = 'Geçersiz kimlik numarası';
-    if (idNo == null) {
-      return invalidIdNoMessage;
-    }
-
-    if (idNo.isEmpty) {
-      return invalidIdNoMessage;
-    }
-
-    final numericRegex = RegExp(r'^[0-9]+$');
-    if (!numericRegex.hasMatch(idNo)) {
-      return invalidIdNoMessage;
-    }
-
-    return null;
-  }
-
   static bool specialCharactersPresent(String value) {
     List<String> specialChars = [
       '!',

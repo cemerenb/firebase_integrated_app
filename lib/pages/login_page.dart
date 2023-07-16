@@ -1,33 +1,50 @@
 import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_integrated_app/pages/create_account_page.dart';
-import 'package:firebase_integrated_app/pages/starting_page.dart';
+import 'package:pirim_depo/pages/create_account_page.dart';
+import 'package:pirim_depo/pages/starting_page.dart';
 import 'package:flutter/material.dart';
 import '../utils/dialog.dart';
 import '../utils/get_data_firestore.dart';
 import '../utils/navigation.dart';
 import '../components/password_text_field_with_validation.dart';
 
-// ignore: camel_case_types
 class LoginPage extends StatefulWidget {
   final bool showLeading;
-  const LoginPage({super.key, this.showLeading = true});
+  const LoginPage({Key? key, this.showLeading = true}) : super(key: key);
 
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
 
-// ignore: camel_case_types
 class _LoginPageState extends State<LoginPage> {
   GlobalKey<PasswordTextFieldWithValidationState> textFieldKey =
       GlobalKey<PasswordTextFieldWithValidationState>();
-
+  var user = FirebaseAuth.instance.currentUser;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final bool _validate = false;
   String? errorMessage;
   bool _isVisible = false;
   final auth = FirebaseAuth.instance;
+
+  @override
+  void initState() {
+    if (user == null) {
+      log('User not exist');
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigation.addRoute(
+          context,
+          StartPage(
+            email: user!.email.toString(),
+            isAdmin: getAdminStatus(user!.uid),
+          ),
+        );
+      });
+      log(user!.email.toString());
+    }
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -48,8 +65,10 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Giriş yap',
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+            const Text(
+              'Giriş yap',
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(
               height: 10,
             ),
@@ -63,31 +82,34 @@ class _LoginPageState extends State<LoginPage> {
               controller: passwordController,
               obscureText: !_isVisible,
               decoration: InputDecoration(
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _isVisible = !_isVisible;
-                      });
-                    },
-                    icon: _isVisible
-                        ? const Icon(
-                            Icons.visibility,
-                            color: Colors.black,
-                          )
-                        : const Icon(
-                            Icons.visibility_off,
-                            color: Color.fromARGB(255, 146, 146, 146),
-                          ),
-                  ),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                          color: Color.fromARGB(255, 148, 146, 146))),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.black)),
-                  hintText: 'Şifre',
-                  contentPadding: const EdgeInsets.all(20.0)),
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _isVisible = !_isVisible;
+                    });
+                  },
+                  icon: _isVisible
+                      ? const Icon(
+                          Icons.visibility,
+                          color: Colors.black,
+                        )
+                      : const Icon(
+                          Icons.visibility_off,
+                          color: Color.fromARGB(255, 146, 146, 146),
+                        ),
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(
+                      color: Color.fromARGB(255, 148, 146, 146)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Colors.black),
+                ),
+                hintText: 'Şifre',
+                contentPadding: const EdgeInsets.all(20.0),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 30),
@@ -96,11 +118,15 @@ class _LoginPageState extends State<LoginPage> {
                   minWidth: double.infinity,
                   onPressed: () async {
                     signIn(
-                        emailController.text, passwordController.text, context);
+                      emailController.text,
+                      passwordController.text,
+                      context,
+                    );
                   },
                   color: Colors.black,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   child: const Text(
                     'Giriş yap',
                     style: TextStyle(color: Colors.white),
@@ -119,16 +145,17 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(fontSize: 17),
                   ),
                   TextButton(
-                      onPressed: () {
-                        Navigation.addRoute(context, const CreateAccountPage());
-                      },
-                      child: const Text(
-                        'Kayıt ol',
-                        style: TextStyle(fontSize: 17),
-                      ))
+                    onPressed: () {
+                      Navigation.addRoute(context, const CreateAccountPage());
+                    },
+                    child: const Text(
+                      'Kayıt ol',
+                      style: TextStyle(fontSize: 17),
+                    ),
+                  ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -148,16 +175,20 @@ class _LoginPageState extends State<LoginPage> {
       controller: emailController,
       textInputAction: TextInputAction.next,
       decoration: InputDecoration(
-          errorText: _validate ? "Email boş olamaz" : null,
-          border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 148, 146, 146))),
-          focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: Colors.black)),
-          hintText: 'Email',
-          contentPadding: const EdgeInsets.all(20.0)),
+        errorText: _validate ? "Email boş olamaz" : null,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(
+            color: Color.fromARGB(255, 148, 146, 146),
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.black),
+        ),
+        hintText: 'Email',
+        contentPadding: const EdgeInsets.all(20.0),
+      ),
     );
   }
 
@@ -170,19 +201,22 @@ class _LoginPageState extends State<LoginPage> {
 
       final user = usercred.user;
       if (user?.emailVerified == true && mounted) {
-        // ignore: use_build_context_synchronously
-        try {
-          bool isAdmin = getAdminStatus(FirebaseAuth.instance.currentUser!.uid);
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          try {
+            bool isAdmin =
+                getAdminStatus(FirebaseAuth.instance.currentUser!.uid);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
                 builder: (context) => StartPage(
-                      email: email,
-                      isAdmin: isAdmin,
-                    )),
-          );
-          // ignore: empty_catches
-        } catch (e) {}
+                  email: email,
+                  isAdmin: isAdmin,
+                ),
+              ),
+            );
+            // ignore: empty_catches
+          } catch (e) {}
+        });
       } else {
         errorMessage =
             "Hesabınızı onaylamanız için onay maili yollandı\nLütfen gelen kutunuzu ve spamları kontrol edin ";
@@ -199,11 +233,6 @@ class _LoginPageState extends State<LoginPage> {
         showMyDialog(context, errorMessage.toString());
         setState(() {});
       });
-
-      // Find the ScaffoldMessenger in the widget tree
-// and use it to show a SnackBar.
-      //ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
-    // ignore: use_build_context_synchronously
   }
 }

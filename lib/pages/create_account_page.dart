@@ -1,4 +1,7 @@
-import 'package:firebase_integrated_app/pages/create_password_page.dart';
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pirim_depo/pages/create_password_page.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/navigation.dart';
@@ -17,11 +20,15 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   final _name = TextEditingController();
   final _idno = TextEditingController();
   final formKey = GlobalKey<FormState>();
-
+  late String errorText = '';
+  late String errorText1 = '';
   final bool _uservalidate = false;
-  final bool _emailvalidate = false;
   final bool _namevalidate = false;
-  final bool _idnovalidate = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -104,12 +111,15 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                       ),
                       TextFormField(
                         controller: _email,
-                        validator: (value) => Validators.emailValidator(value),
+                        onChanged: (value) async {
+                          errorText1 = await emailValidator(_email.text);
+                          log(errorText1);
+                          setState(() {});
+                        },
                         textInputAction: TextInputAction.done,
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
-                            errorText:
-                                _emailvalidate ? "Email Can't Be Empty" : null,
+                            errorText: errorText1,
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                                 borderSide: const BorderSide(
@@ -126,13 +136,15 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                       ),
                       TextFormField(
                         controller: _idno,
-                        validator: (value) => Validators.idNoValidator(value),
                         textInputAction: TextInputAction.done,
                         keyboardType: TextInputType.number,
+                        onChanged: (value) async {
+                          errorText = await idNoValidator(_idno.text);
+                          log(errorText);
+                          setState(() {});
+                        },
                         decoration: InputDecoration(
-                            errorText: _idnovalidate
-                                ? "Tc kimlik no boş olamaz"
-                                : null,
+                            errorText: errorText,
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                                 borderSide: const BorderSide(
@@ -150,15 +162,23 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                           child: MaterialButton(
                             minWidth: double.infinity,
                             onPressed: () {
-                              if (formKey.currentState?.validate() ?? false) {
-                                Navigation.addRoute(
-                                    context,
-                                    CreatePasswordPage(
-                                      username: _user.text,
-                                      email: _email.text,
-                                      name: _name.text,
-                                      idno: _idno.text,
-                                    ));
+                              if (errorText == '' &&
+                                  errorText1 == "" &&
+                                  _email.text.isNotEmpty &&
+                                  _idno.text.isNotEmpty) {
+                                if (formKey.currentState?.validate() ?? false) {
+                                  Navigation.addRoute(
+                                      context,
+                                      CreatePasswordPage(
+                                        username: _user.text,
+                                        email: _email.text,
+                                        name: _name.text,
+                                        idno: _idno.text,
+                                      ));
+                                }
+                              } else {
+                                log(errorText);
+                                setState(() {});
                               }
                             },
                             color: Colors.black,
@@ -175,4 +195,79 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
           ),
         ));
   }
+}
+
+idNoValidator(String idNo) async {
+  String error = '';
+  if (idNo.isEmpty || idNo.length != 11) {
+    error = 'Geçersiz kimlik numarası';
+    log(error);
+    return error;
+  }
+
+  // Firestore'da "person" koleksiyonuna erişim sağlayan bir referans oluşturun
+  final CollectionReference personCollection =
+      FirebaseFirestore.instance.collection('person');
+
+  // "person" koleksiyonundaki belgeleri alın
+  final QuerySnapshot snapshot = await personCollection.get();
+
+  // Verilen kimlik numarasını kontrol edin
+  for (final DocumentSnapshot doc in snapshot.docs) {
+    final Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
+
+    if (data != null && data['idNo'] == idNo) {
+      error = 'Bu Tc Kimlik Numarası Kullanılmaktadır';
+      log(error);
+      return error = '';
+    }
+  }
+
+  // Geçerli bir kimlik numarası olduğunu belirtin
+  return error;
+}
+
+emailValidator(String? mail) async {
+  String mailErrorMessage = 'Geçersiz email';
+  if (mail == null) {
+    return mailErrorMessage;
+  }
+
+  if (mail.isEmpty) {
+    return mailErrorMessage;
+  }
+
+  if (!mail.contains('@')) {
+    return mailErrorMessage;
+  }
+
+  final splittedMail = mail.split('@');
+
+  if (splittedMail.length != 2) {
+    return mailErrorMessage;
+  }
+
+  final rightPart = splittedMail[1];
+
+  if (!rightPart.contains('.')) {
+    return mailErrorMessage;
+  }
+  final CollectionReference personCollection =
+      FirebaseFirestore.instance.collection('person');
+
+  // "person" koleksiyonundaki belgeleri alın
+  final QuerySnapshot snapshot = await personCollection.get();
+
+  // Verilen kimlik numarasını kontrol edin
+  for (final DocumentSnapshot doc in snapshot.docs) {
+    final Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
+
+    if (data != null && data['email'] == mail) {
+      mailErrorMessage = 'Bu Email Numarası Kullanılmaktadır';
+      log(mailErrorMessage);
+      return mailErrorMessage;
+    }
+  }
+
+  return mailErrorMessage = '';
 }

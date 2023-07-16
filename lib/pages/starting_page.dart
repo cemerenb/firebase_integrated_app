@@ -1,12 +1,14 @@
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_integrated_app/pages/accept_term.dart';
-import 'package:firebase_integrated_app/pages/add_item.dart';
-import 'package:firebase_integrated_app/pages/profile.dart';
-import 'package:firebase_integrated_app/pages/search_item_name.dart';
-import 'package:firebase_integrated_app/utils/get_data_firestore.dart';
-import 'package:firebase_integrated_app/utils/scan.dart';
+import 'package:pirim_depo/pages/add_inventory_data.dart';
+import 'package:pirim_depo/pages/add_item.dart';
+import 'package:pirim_depo/pages/profile.dart';
+import 'package:pirim_depo/pages/scan_result.dart';
+import 'package:pirim_depo/pages/search_item_name.dart';
+import 'package:pirim_depo/utils/get_data_firestore.dart';
+import 'package:pirim_depo/utils/scan.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
@@ -32,7 +34,13 @@ class _StartPageState extends State<StartPage> {
   @override
   void initState() {
     super.initState();
+
+    setState(() {
+      isAdmin = getAdminStatus(FirebaseAuth.instance.currentUser!.uid);
+    });
+
     getImage();
+    getUserName(FirebaseAuth.instance.currentUser!.uid);
     checkProfileImage();
     setState(() {});
   }
@@ -81,10 +89,27 @@ class _StartPageState extends State<StartPage> {
                         child: SizedBox(
                           height: 50,
                           width: 50,
-                          child: CircleAvatar(
-                            radius: 40,
-                            foregroundImage:
-                                NetworkImage(getImage().toString()),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(100),
+                            child: CachedNetworkImage(
+                              imageUrl: getImage().toString(),
+                              imageBuilder: (context, imageProvider) =>
+                                  Container(
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                        fit: BoxFit.cover,
+                                        image: NetworkImage(
+                                          getImage().toString(),
+                                        ))),
+                              ),
+                              placeholder: (context, url) =>
+                                  const CircularProgressIndicator(),
+                              errorWidget: (context, url, error) => const Icon(
+                                Icons.error,
+                                color: Colors.red,
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -131,8 +156,7 @@ class _StartPageState extends State<StartPage> {
                               Navigation.addRoute(
                                   context,
                                   AddItem(
-                                    lastModifiedUser: userName,
-                                  ));
+                                      lastModifiedUser: userName.toString()));
                             },
                             child: Container(
                                 width: MediaQuery.of(context).size.width / 2.3,
@@ -203,7 +227,17 @@ class _StartPageState extends State<StartPage> {
                                         ),
                                       ),
                                       GestureDetector(
-                                        onTap: scanQR,
+                                        onTap: () async {
+                                          scanResult = await scanQR();
+                                          log("Scan ${scanResult.toString()}");
+                                          if (mounted) {
+                                            Navigation.addRoute(
+                                                context,
+                                                ScanResult(
+                                                    serialNo:
+                                                        scanResult ?? ''));
+                                          }
+                                        },
                                         child: Container(
                                           decoration: BoxDecoration(
                                               color: const Color.fromARGB(
@@ -234,7 +268,16 @@ class _StartPageState extends State<StartPage> {
                                     ],
                                   ),
                                   GestureDetector(
-                                    onTap: scanBarcode,
+                                    onTap: () async {
+                                      scanResult = await scanQR();
+                                      log("Scan ${scanResult.toString()}");
+                                      if (mounted) {
+                                        Navigation.addRoute(
+                                            context,
+                                            ScanResult(
+                                                serialNo: scanResult ?? ''));
+                                      }
+                                    },
                                     child: Padding(
                                       padding: const EdgeInsets.only(top: 10),
                                       child: Container(
@@ -275,8 +318,10 @@ class _StartPageState extends State<StartPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           GestureDetector(
-                            onTap: () => Navigation.addRoute(
-                                context, const AcceptTerm()),
+                            onTap: () {
+                              Navigation.addRoute(
+                                  context, const AddInventoryData());
+                            },
                             child: Container(
                                 width: MediaQuery.of(context).size.width / 2.3,
                                 height: 250,
@@ -303,7 +348,7 @@ class _StartPageState extends State<StartPage> {
                           Padding(
                             padding: const EdgeInsets.only(left: 15.0),
                             child: Visibility(
-                              visible: isAdmin,
+                              visible: widget.isAdmin,
                               child: Container(
                                 width: MediaQuery.of(context).size.width / 2.3,
                                 height: 250,
@@ -322,7 +367,7 @@ class _StartPageState extends State<StartPage> {
                           Padding(
                             padding: const EdgeInsets.only(),
                             child: Visibility(
-                              visible: !isAdmin,
+                              visible: !widget.isAdmin,
                               child: SizedBox(
                                 width: MediaQuery.of(context).size.width / 2.3,
                                 height: 250,

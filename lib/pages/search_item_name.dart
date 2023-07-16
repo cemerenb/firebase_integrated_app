@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_integrated_app/pages/search_result.dart';
-import 'package:firebase_integrated_app/utils/navigation.dart';
+import 'package:pirim_depo/pages/search_result.dart';
+import 'package:pirim_depo/utils/navigation.dart';
 import 'package:flutter/material.dart';
 
 class SearchByName extends StatefulWidget {
@@ -40,6 +40,7 @@ class _SearchSerialState extends State<SearchByName> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Visibility(
           visible: isVisible,
@@ -88,13 +89,38 @@ class _SearchSerialState extends State<SearchByName> {
     }
   }
 
-  ListView homePageListView() {
+  Widget homePageListView() {
     List<DocumentSnapshot> filteredItems = items.where((item) {
       String searchText = searchController.text.toLowerCase();
       String itemName = item['name'].toString().toLowerCase();
       return itemName.contains(searchText);
     }).toList();
     log(searchController.text);
+
+    if (filteredItems.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 100.0),
+          child: Container(
+            width: 200,
+            height: 200,
+            decoration: BoxDecoration(
+                color: Colors.grey, borderRadius: BorderRadius.circular(20)),
+            child: const Center(
+              child: Padding(
+                padding: EdgeInsets.all(10.0),
+                child: Text(
+                  'Gösterilecek Ürün Yok',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 25),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return ListView.builder(
       shrinkWrap: true,
       itemCount: filteredItems.length,
@@ -107,25 +133,24 @@ class _SearchSerialState extends State<SearchByName> {
         final String expiryDate = item['expiryDate'];
         final String locationCode = item['locationCode'];
         final String lastModifiedTime = item['lastModifiedTime'];
-        final String lastModifiedUser = item['lastModifiedUser']; // Eklendi
+        final String lastModifiedUser = item['lastModifiedUser'];
 
         return Card(
           child: MaterialButton(
             onPressed: () {
               Navigation.addRoute(
-                  context,
-                  SearchResult(
-                    serialNo: serialNo,
-                    itemName: itemName,
-                    acceptDate: acceptDate,
-                    expiryDate: expiryDate,
-                    locationCode: locationCode,
-                    piece: piece,
-                    lastModifiedTime: lastModifiedTime,
-                    lastModifiedUser: lastModifiedUser,
-                  ));
-              //bottomSheet(context, itemName, serialNo, piece, acceptDate,
-              //  expiryDate, locationCode); // Güncellendi
+                context,
+                SearchResult(
+                  serialNo: serialNo,
+                  itemName: itemName,
+                  acceptDate: acceptDate,
+                  expiryDate: expiryDate,
+                  locationCode: locationCode,
+                  piece: piece,
+                  lastModifiedTime: lastModifiedTime,
+                  lastModifiedUser: lastModifiedUser,
+                ),
+              );
             },
             child: Padding(
               padding: const EdgeInsets.only(left: 15.0, top: 5, bottom: 2),

@@ -1,4 +1,4 @@
-import 'package:firebase_integrated_app/utils/text.dart';
+import 'package:pirim_depo/utils/text.dart';
 import 'package:flutter/material.dart';
 
 class About extends StatelessWidget {

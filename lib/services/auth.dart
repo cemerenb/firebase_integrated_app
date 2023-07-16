@@ -18,8 +18,14 @@ class AuthService {
     return user;
   }
 
-  static Future<User?> createPerson(String username, String email,
-      String password, bool isAdmin, String name, String idno) async {
+  static Future<User?> createPerson(
+      String username,
+      String email,
+      String password,
+      bool isAdmin,
+      String name,
+      String idno,
+      bool isOwner) async {
     var user = await _auth.createUserWithEmailAndPassword(
         email: email, password: password);
     await _firestore.collection('person').doc(user.user!.uid).set({
@@ -28,6 +34,7 @@ class AuthService {
       'isAdmin': isAdmin,
       'name': name,
       'idNo': idno,
+      'isOwner': isOwner
     });
     return user.user;
   }

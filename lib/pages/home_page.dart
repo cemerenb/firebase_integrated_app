@@ -1,4 +1,4 @@
-import 'package:firebase_integrated_app/pages/login_page.dart';
+import 'package:pirim_depo/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import '../utils/navigation.dart';
 

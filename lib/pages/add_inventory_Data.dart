@@ -1,110 +1,201 @@
 import 'dart:developer';
-
-import 'package:firebase_integrated_app/pages/add_inventory_Data_search_result.dart';
-import 'package:firebase_integrated_app/utils/navigation.dart';
-import 'package:firebase_integrated_app/utils/scan.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:pirim_depo/pages/add_item_search_result.dart';
+import 'package:pirim_depo/pages/starting_page.dart';
+import 'package:pirim_depo/utils/get_data_firestore.dart';
+import 'package:pirim_depo/utils/navigation.dart';
 import 'package:flutter/material.dart';
 
 class AddInventoryData extends StatefulWidget {
-  const AddInventoryData({super.key});
+  const AddInventoryData({Key? key})
+      : super(
+          key: key,
+        );
 
   @override
-  State<AddInventoryData> createState() => _AddInventoryDataState();
+  State<AddInventoryData> createState() => _SearchSerialState();
 }
 
-final serialController = TextEditingController();
+class _SearchSerialState extends State<AddInventoryData> {
+  bool isVisible = false;
+  bool isCategorised = false;
+  final priceController = TextEditingController();
+  final myController = TextEditingController();
+  final searchController = TextEditingController();
+  final serialController = TextEditingController();
 
-class _AddInventoryDataState extends State<AddInventoryData> {
-  String? scanResult;
+  List<DocumentSnapshot> items = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchItems();
+  }
+
+  @override
+  void dispose() {
+    myController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: const Text('Stok Gir'),
-      ),
-      body: Column(
-        children: [
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+            onPressed: () {
+              Navigation.addRoute(
+                  context,
+                  StartPage(
+                      email: getEmail(FirebaseAuth.instance.currentUser!.uid),
+                      isAdmin: getAdminStatus(
+                          FirebaseAuth.instance.currentUser!.uid)));
+            },
+            icon: const Icon(Icons.arrow_back)),
+        title: Visibility(
+          visible: isVisible,
+          child: TextFormField(
+            controller: searchController,
+            onChanged: (value) {
+              setState(() {});
+            },
+            decoration: formFieldDecoration(),
+          ),
+        ),
+        actions: [
           Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: TextField(
-              controller: serialController,
-              decoration: InputDecoration(
-                  suffixIcon: IconButton(
-                      onPressed: () async {
-                        scanResult = await scanBarcode();
-                        if (scanResult != null) {
-                          log(scanResult.toString());
-                          serialController.text = scanResult.toString();
-                        }
-                      },
-                      icon: const Icon(Icons.camera_alt_outlined)),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                          color: Color.fromARGB(255, 148, 146, 146))),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                        color: Color.fromARGB(0, 36, 36, 36),
-                      )),
-                  hintText: 'Seri No',
-                  contentPadding: const EdgeInsets.all(5.0)),
+            padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+            child: IconButton(
+              onPressed: () {
+                setState(() {
+                  isVisible = !isVisible;
+                });
+              },
+              icon: const Icon(
+                Icons.search,
+                size: 35,
+              ),
             ),
           ),
-          const Spacer(),
-          Row(
-            children: [
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Container(
-                  height: 60,
-                  decoration: const BoxDecoration(
-                    color: Colors.grey,
-                    shape: BoxShape.circle,
-                  ),
-                  child: MaterialButton(
-                      onPressed: () {
-                        if (serialController.text.isNotEmpty) {
-                          Navigation.addRoute(
-                              context, const AddInventorySearchResult());
-                        } else {
-                          _showMyDialog();
-                        }
-                      },
-                      child: const Icon(Icons.arrow_forward)),
-                ),
-              ),
-            ],
-          )
         ],
       ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(child: homePageListView()),
     );
   }
 
-  Future<void> _showMyDialog() async {
-    return showDialog<void>(
-        context: context,
-        barrierDismissible: false, // user must tap button!
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: const SingleChildScrollView(
-              child: ListBody(
-                children: <Widget>[
-                  Text('Seri no boş olamaz'),
-                ],
+  Future<void> fetchItems() async {
+    try {
+      final QuerySnapshot snapshot =
+          await FirebaseFirestore.instance.collection('items').get();
+      final List<DocumentSnapshot> documents = snapshot.docs;
+      setState(() {
+        items = documents;
+        isLoading = false;
+      });
+    } catch (error) {
+      log('Error fetching items: $error');
+    }
+  }
+
+  Widget homePageListView() {
+    List<DocumentSnapshot> filteredItems = items.where((item) {
+      String searchText = searchController.text.toLowerCase();
+      String itemName = item['name'].toString().toLowerCase();
+      return itemName.contains(searchText);
+    }).toList();
+    log(searchController.text);
+
+    if (filteredItems.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 100.0),
+          child: Container(
+            width: 200,
+            height: 200,
+            decoration: BoxDecoration(
+                color: Colors.grey, borderRadius: BorderRadius.circular(20)),
+            child: const Center(
+              child: Padding(
+                padding: EdgeInsets.all(10.0),
+                child: Text(
+                  'Gösterilecek Ürün Yok',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 25),
+                ),
               ),
             ),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('Tamam'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
+          ),
+        ),
+      );
+    }
+
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: filteredItems.length,
+      itemBuilder: (context, index) {
+        final DocumentSnapshot item = filteredItems[index];
+        final String serialNo = item['serialNo'];
+        final String itemName = item['name'];
+        final String piece = item['piece'].toString();
+        final String acceptDate = item['acceptDate'];
+        final String expiryDate = item['expiryDate'];
+        final String locationCode = item['locationCode'];
+        final String lastModifiedTime = item['lastModifiedTime'];
+        final String lastModifiedUser = item['lastModifiedUser'];
+
+        return Card(
+          child: MaterialButton(
+            onPressed: () {
+              Navigation.addRoute(
+                context,
+                AddInventorySearchResult(
+                  serialNo: serialNo,
+                  itemName: itemName,
+                  acceptDate: acceptDate,
+                  expiryDate: expiryDate,
+                  locationCode: locationCode,
+                  piece: piece,
+                  lastModifiedTime: lastModifiedTime,
+                  lastModifiedUser: lastModifiedUser,
+                ),
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(left: 15.0, top: 5, bottom: 2),
+              child: ListTile(
+                title: SizedBox(height: 20, width: 200, child: Text(itemName)),
+                trailing: Text(
+                  serialNo,
+                  style: const TextStyle(fontSize: 15),
+                ),
               ),
-            ],
-          );
-        });
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  InputDecoration formFieldDecoration() {
+    return InputDecoration(
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: Color.fromARGB(255, 148, 146, 146)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(
+          color: Color.fromARGB(0, 129, 129, 129),
+        ),
+      ),
+      hintText: 'Ara',
+      contentPadding: const EdgeInsets.all(5.0),
+    );
   }
 }

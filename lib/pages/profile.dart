@@ -1,8 +1,10 @@
 import 'dart:developer';
 import 'dart:io';
-import 'package:firebase_integrated_app/pages/about.dart';
-import 'package:firebase_integrated_app/pages/help.dart';
-import 'package:firebase_integrated_app/utils/get_data_firestore.dart';
+import 'package:pirim_depo/pages/about.dart';
+import 'package:pirim_depo/pages/admin_switch.dart';
+import 'package:pirim_depo/pages/help.dart';
+import 'package:pirim_depo/pages/starting_page.dart';
+import 'package:pirim_depo/utils/get_data_firestore.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -31,7 +33,7 @@ class _ProfileState extends State<Profile> {
   void initState() {
     super.initState();
     getUserName(uid);
-    getName(uid);
+    name = getName(uid);
     getIdNo(uid);
     checkProfileImage();
   }
@@ -169,8 +171,13 @@ class _ProfileState extends State<Profile> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: IconButton(
-            onPressed: () {
-              Navigation.popRoute(context);
+            onPressed: () async {
+              Navigation.addRoute(
+                  context,
+                  StartPage(
+                      email: getEmail(FirebaseAuth.instance.currentUser!.uid),
+                      isAdmin: getAdminStatus(
+                          FirebaseAuth.instance.currentUser!.uid)));
             },
             icon: const Icon(Icons.arrow_back)),
         title: const Text('Profilim'),
@@ -321,6 +328,42 @@ class _ProfileState extends State<Profile> {
                       padding: EdgeInsets.only(left: 20),
                       child: Text(
                         'Yardım',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    const Spacer(),
+                    Container(
+                        height: 35,
+                        width: 35,
+                        decoration: BoxDecoration(
+                            color: const Color.fromARGB(97, 168, 168, 168),
+                            borderRadius: BorderRadius.circular(9)),
+                        child: const Icon(Icons.keyboard_arrow_right))
+                  ],
+                ),
+              ),
+            ),
+            MaterialButton(
+              onPressed: () {
+                Navigation.addRoute(context, const AdminSwitchPage());
+              },
+              child: Container(
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(10)),
+                height: 70,
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    const Icon(
+                      Icons.admin_panel_settings_outlined,
+                      size: 30,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 20),
+                      child: Text(
+                        'Yönetici Paneli',
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w500),
                       ),

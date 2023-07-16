@@ -1,4 +1,4 @@
-# firebase_integrated_app
+# pirim_depo
 
 A Flutter project to learn Firebase integration into Flutter. This project includes Firebase Core, Firebase Auth, Firebase Storage, Cloud Firestore packages.
 

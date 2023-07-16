@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 bool isAdmin = false;
+String email = '';
 String name = '';
 String idNo = '';
 String serialNo = '';
@@ -10,6 +11,8 @@ String itemName = '';
 String expiryDate = '';
 String acceptDate = '';
 String locationCode = '';
+String lastModifiedUser = '';
+String lastModifiedTime = '';
 int piece = 0;
 bool isChecked = true;
 
@@ -44,6 +47,39 @@ getAdminStatus(String uid) {
     log('Error getting document: $error');
   });
   return isAdmin;
+}
+
+getEmail(String uid) {
+  FirebaseFirestore.instance
+      .collection('person')
+      .doc(uid)
+      .get()
+      .then((DocumentSnapshot? documentSnapshot) {
+    if (documentSnapshot != null && documentSnapshot.exists) {
+      // Cast data to Map<String, dynamic>
+      var data = documentSnapshot.data() as Map<String, dynamic>?;
+
+      if (data != null) {
+        // Access the isAdmin field value
+        email = data['email'];
+
+        // ignore: unnecessary_null_comparison
+        if (email != null) {
+          // Now you can use the isAdmin value as needed
+          log('email: $email');
+        } else {
+          log('email field is null');
+        }
+      } else {
+        log('Document data is null');
+      }
+    } else {
+      log('No such document!');
+    }
+  }).catchError((error) {
+    log('Error getting document: $error');
+  });
+  return email;
 }
 
 getName(String uid) {
@@ -117,7 +153,7 @@ getUserName(String uid) {
         userName = data['userName'] ?? '';
 
         if (userName.isNotEmpty) {
-          log('Id No: $userName');
+          log('Username: $userName');
         } else {
           log('Id No field is empty');
         }
@@ -150,6 +186,8 @@ getItemData(String serialNo) {
         locationCode = data['locationCode'] ?? '';
         piece = data['piece'] ?? '';
         isChecked = data['isChecked'] ?? '';
+        lastModifiedUser = data['lastModifiedUser'] ?? '';
+        lastModifiedTime = data['lastModifiedTimer'] ?? '';
 
         if (userName.isNotEmpty) {
           log('Id No: $userName');
@@ -165,5 +203,14 @@ getItemData(String serialNo) {
   }).catchError((error) {
     log('Error getting document: $error');
   });
-  return [serialNo, expiryDate, acceptDate, locationCode, piece, isChecked];
+  return [
+    serialNo,
+    expiryDate,
+    acceptDate,
+    locationCode,
+    piece,
+    isChecked,
+    lastModifiedUser,
+    lastModifiedTime
+  ];
 }

@@ -1,6 +1,9 @@
 import 'dart:developer';
-import 'package:firebase_integrated_app/utils/dialog.dart';
-import 'package:firebase_integrated_app/utils/get_data_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:pirim_depo/pages/starting_page.dart';
+import 'package:pirim_depo/utils/dialog.dart';
+import 'package:pirim_depo/utils/get_data_firestore.dart';
+import 'package:pirim_depo/utils/navigation.dart';
 import 'package:pattern_formatter/pattern_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -37,7 +40,19 @@ class _AddItemState extends State<AddItem> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        leading: IconButton(
+            onPressed: () {
+              Navigation.addRoute(
+                  context,
+                  StartPage(
+                      email: getEmail(FirebaseAuth.instance.currentUser!.uid),
+                      isAdmin: getAdminStatus(
+                          FirebaseAuth.instance.currentUser!.uid)));
+            },
+            icon: const Icon(Icons.arrow_back)),
+        automaticallyImplyLeading: false,
+      ),
       body: Column(
         children: [
           Padding(
@@ -45,6 +60,7 @@ class _AddItemState extends State<AddItem> {
             child: TextField(
               controller: nameController,
               keyboardType: TextInputType.text,
+              textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -65,16 +81,19 @@ class _AddItemState extends State<AddItem> {
             child: TextField(
               keyboardType: TextInputType.text,
               controller: serialController,
+              textInputAction: TextInputAction.next,
+              onEditingComplete: () => FocusScope.of(context).nextFocus(),
               decoration: InputDecoration(
-                  suffixIcon: IconButton(
-                      onPressed: () {
-                        scanBarcode();
-                        setState(() {
+                  suffixIcon: GestureDetector(
+                      onTap: () async {
+                        await scanBarcode();
+                        if (serialNoScanResult != '-1') {
                           serialNoScanResult = serialNoScanResult;
                           serialController.text = serialNoScanResult.toString();
-                        });
+                        }
+                        setState(() {});
                       },
-                      icon: const Icon(
+                      child: const Icon(
                         Icons.camera_alt_outlined,
                         size: 30,
                       )),
@@ -100,6 +119,7 @@ class _AddItemState extends State<AddItem> {
                   child: TextField(
                     keyboardType: TextInputType.datetime,
                     controller: expiryController,
+                    textInputAction: TextInputAction.next,
                     inputFormatters: [
                       DateInputFormatter(),
                     ],
@@ -121,6 +141,7 @@ class _AddItemState extends State<AddItem> {
                 Flexible(
                   child: TextField(
                     controller: acceptController,
+                    textInputAction: TextInputAction.next,
                     inputFormatters: [
                       DateInputFormatter(),
                     ],
@@ -148,17 +169,18 @@ class _AddItemState extends State<AddItem> {
             child: TextField(
               keyboardType: TextInputType.text,
               controller: locationController,
+              textInputAction: TextInputAction.go,
               decoration: InputDecoration(
-                  suffixIcon: IconButton(
-                      onPressed: () {
-                        scanQR();
-                        setState(() {
-                          locationScanResult = locationScanResult;
-                          locationController.text =
-                              locationScanResult.toString();
-                        });
+                  suffixIcon: GestureDetector(
+                      onTap: () async {
+                        await scanBarcode();
+                        if (serialNoScanResult != '-1') {
+                          serialNoScanResult = serialNoScanResult;
+                          serialController.text = serialNoScanResult.toString();
+                        }
+                        setState(() {});
                       },
-                      icon: const Icon(
+                      child: const Icon(
                         Icons.camera_alt_outlined,
                         size: 30,
                       )),

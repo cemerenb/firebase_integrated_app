@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.cemerenb" "\0"
-            VALUE "FileDescription", "firebase_integrated_app" "\0"
+            VALUE "FileDescription", "pirim_depo" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "firebase_integrated_app" "\0"
+            VALUE "InternalName", "pirim_depo" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2023 com.cemerenb. All rights reserved." "\0"
-            VALUE "OriginalFilename", "firebase_integrated_app.exe" "\0"
-            VALUE "ProductName", "firebase_integrated_app" "\0"
+            VALUE "OriginalFilename", "pirim_depo.exe" "\0"
+            VALUE "ProductName", "pirim_depo" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
