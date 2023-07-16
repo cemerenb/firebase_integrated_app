@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 bool isAdmin = false;
+bool isOwner = false;
 String email = '';
 String name = '';
 String idNo = '';
@@ -47,6 +48,39 @@ getAdminStatus(String uid) {
     log('Error getting document: $error');
   });
   return isAdmin;
+}
+
+getOwnerStatus(String uid) {
+  FirebaseFirestore.instance
+      .collection('person')
+      .doc(uid)
+      .get()
+      .then((DocumentSnapshot? documentSnapshot) {
+    if (documentSnapshot != null && documentSnapshot.exists) {
+      // Cast data to Map<String, dynamic>
+      var data = documentSnapshot.data() as Map<String, dynamic>?;
+
+      if (data != null) {
+        // Access the isAdmin field value
+        isOwner = data['isOwner'];
+
+        // ignore: unnecessary_null_comparison
+        if (isOwner != null) {
+          // Now you can use the isAdmin value as needed
+          log('isOwner: $isOwner');
+        } else {
+          log('isOwner field is null');
+        }
+      } else {
+        log('Document data is null');
+      }
+    } else {
+      log('No such document!');
+    }
+  }).catchError((error) {
+    log('Error getting document: $error');
+  });
+  return isOwner;
 }
 
 getEmail(String uid) {

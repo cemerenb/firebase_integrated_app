@@ -84,7 +84,9 @@ class _CreatePasswordPageState extends State<CreatePasswordPage> {
                   InkWell(
                       onTap: () {
                         isChecked = !isChecked;
-                        setState(() {});
+                        setState(() {
+                          log(isChecked.toString());
+                        });
                       },
                       child: isChecked
                           ? const Icon(Icons.check_box_outline_blank)
@@ -107,9 +109,10 @@ class _CreatePasswordPageState extends State<CreatePasswordPage> {
                     final validated =
                         textFieldKey.currentState?.validate() ?? false;
 
-                    if (validated && isChecked == true) {
+                    if (validated && isChecked == false) {
                       final password = textFieldKey.currentState?.getPassword();
                       try {
+                        log(isOwner.toString());
                         final response = await AuthService.createPerson(
                             widget.username,
                             widget.email,
@@ -117,7 +120,7 @@ class _CreatePasswordPageState extends State<CreatePasswordPage> {
                             widget.isAdmin,
                             widget.name,
                             widget.idno,
-                            widget.isOwner);
+                            isOwner);
                         log('person created');
                         final usercred = await FirebaseAuth.instance
                             .signInWithEmailAndPassword(

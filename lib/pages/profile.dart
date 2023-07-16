@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pirim_depo/pages/about.dart';
 import 'package:pirim_depo/pages/admin_switch.dart';
 import 'package:pirim_depo/pages/help.dart';
@@ -344,39 +345,42 @@ class _ProfileState extends State<Profile> {
                 ),
               ),
             ),
-            MaterialButton(
-              onPressed: () {
-                Navigation.addRoute(context, const AdminSwitchPage());
-              },
-              child: Container(
-                decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(10)),
-                height: 70,
-                width: MediaQuery.of(context).size.width * 0.8,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    const Icon(
-                      Icons.admin_panel_settings_outlined,
-                      size: 30,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 20),
-                      child: Text(
-                        'Yönetici Paneli',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w500),
+            Visibility(
+              visible: getOwnerStatus(FirebaseAuth.instance.currentUser!.uid),
+              child: MaterialButton(
+                onPressed: () {
+                  Navigation.addRoute(context, const AdminSwitchPage());
+                },
+                child: Container(
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(10)),
+                  height: 70,
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      const Icon(
+                        Icons.admin_panel_settings_outlined,
+                        size: 30,
                       ),
-                    ),
-                    const Spacer(),
-                    Container(
-                        height: 35,
-                        width: 35,
-                        decoration: BoxDecoration(
-                            color: const Color.fromARGB(97, 168, 168, 168),
-                            borderRadius: BorderRadius.circular(9)),
-                        child: const Icon(Icons.keyboard_arrow_right))
-                  ],
+                      const Padding(
+                        padding: EdgeInsets.only(left: 20),
+                        child: Text(
+                          'Yönetici Paneli',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                      const Spacer(),
+                      Container(
+                          height: 35,
+                          width: 35,
+                          decoration: BoxDecoration(
+                              color: const Color.fromARGB(97, 168, 168, 168),
+                              borderRadius: BorderRadius.circular(9)),
+                          child: const Icon(Icons.keyboard_arrow_right))
+                    ],
+                  ),
                 ),
               ),
             ),
