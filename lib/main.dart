@@ -34,9 +34,10 @@ class _MyAppState extends State<MyApp> {
         progressIndicatorTheme:
             const ProgressIndicatorThemeData(color: Colors.white),
         appBarTheme: const AppBarTheme(
+          titleTextStyle: TextStyle(color: Colors.white, fontSize: 18),
           centerTitle: true,
           backgroundColor: Colors.transparent,
-          foregroundColor: Colors.black,
+          foregroundColor: Color.fromARGB(255, 255, 255, 255),
           elevation: 0,
         ),
         colorScheme: const ColorScheme(
@@ -63,6 +64,7 @@ class _MyAppState extends State<MyApp> {
             const ProgressIndicatorThemeData(color: Colors.white),
         listTileTheme: const ListTileThemeData(contentPadding: EdgeInsets.zero),
         appBarTheme: const AppBarTheme(
+          titleTextStyle: TextStyle(color: Colors.black, fontSize: 18),
           centerTitle: true,
           systemOverlayStyle: SystemUiOverlayStyle.light,
           backgroundColor: Colors.transparent,

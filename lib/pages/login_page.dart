@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pirim_depo/pages/create_account_page.dart';
 import 'package:pirim_depo/pages/starting_page.dart';
@@ -31,7 +32,9 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     if (user == null) {
       log('User not exist');
-    } else {
+    } else if (getLogedInStatus(FirebaseAuth.instance.currentUser!.uid)
+            .toString() ==
+        'false') {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigation.addRoute(
           context,
@@ -193,18 +196,25 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future signIn(String email, String password, BuildContext context) async {
+    log(isLogedIn.toString());
     try {
       final usercred = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email.trim(),
         password: password.trim(),
       );
-
+      bool isLogedIn =
+          await getLogedInStatus(FirebaseAuth.instance.currentUser!.uid);
+      log(isLogedIn.toString());
       final user = usercred.user;
-      if (user?.emailVerified == true && mounted) {
+      if (user?.emailVerified == true && mounted && isLogedIn == false) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           try {
             bool isAdmin =
                 getAdminStatus(FirebaseAuth.instance.currentUser!.uid);
+            FirebaseFirestore.instance
+                .collection('person')
+                .doc(user?.uid)
+                .update({'isLogedIn': true});
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
@@ -217,13 +227,20 @@ class _LoginPageState extends State<LoginPage> {
             // ignore: empty_catches
           } catch (e) {}
         });
-      } else {
+      } else if (user?.emailVerified == false) {
         errorMessage =
             "Hesabınızı onaylamanız için onay maili yollandı\nLütfen gelen kutunuzu ve spamları kontrol edin ";
 
         setState(() {});
         showMyDialog(context, errorMessage.toString());
         user?.sendEmailVerification();
+        FirebaseAuth.instance.signOut();
+      } else if (isLogedIn == true) {
+        errorMessage =
+            'Hesap farklı cihazda açık lütfen tek cihazda giriş yapın';
+        setState(() {});
+        log(isLogedIn.toString());
+        showMyDialog(context, errorMessage.toString());
         FirebaseAuth.instance.signOut();
       }
     } catch (e) {

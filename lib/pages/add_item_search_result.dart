@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pirim_depo/pages/add_inventory_data.dart';
+import 'package:pirim_depo/utils/dialog.dart';
 import 'package:pirim_depo/utils/navigation.dart';
 import 'package:flutter/material.dart';
 
@@ -130,7 +131,29 @@ class _AddInventorySearchResultState extends State<AddInventorySearchResult> {
                               color: const Color.fromARGB(255, 145, 145, 145),
                               borderRadius: BorderRadius.circular(5)),
                           child: MaterialButton(
-                            onPressed: () {},
+                            onPressed: () async {
+                              try {
+                                await FirebaseFirestore.instance
+                                    .collection('items')
+                                    .doc(serialController.text)
+                                    .update({'piece': pieceController.text});
+                                await FirebaseFirestore.instance
+                                    .collection('items')
+                                    .doc(serialController.text)
+                                    .update({
+                                  'locationCode': locationController.text
+                                });
+
+                                if (mounted) {
+                                  showMyDialog(
+                                      context, 'Ürün başarıyla güncellendi');
+                                }
+                                setState(() {});
+                              } catch (e) {
+                                showMyDialog(context, 'Bir hata oldu');
+                                setState(() {});
+                              }
+                            },
                             child: const Text(
                               'Kaydet',
                               style: TextStyle(fontSize: 16),

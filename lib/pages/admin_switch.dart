@@ -60,23 +60,31 @@ class _AdminSwitchPageState extends State<AdminSwitchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Admin Switch'),
+        title: const Text('Yönetici Paneli'),
       ),
       body: ListView.builder(
         itemCount: personList.length,
         itemBuilder: (context, index) {
           final person = personList[index];
-          return ListTile(
-            title: Text(person.email),
-            trailing: Switch(
-              value: person.isAdmin,
-              onChanged: (value) async {
-                await toggleAdminStatus(index, value);
-                setState(() {});
-                log(person.isAdmin.toString());
-              },
-              activeColor: Colors.green,
-              inactiveThumbColor: Colors.red,
+          return Padding(
+            padding: const EdgeInsets.only(left: 8.0, right: 8),
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListTile(
+                  title: Text(person.email),
+                  trailing: Switch(
+                    value: person.isAdmin,
+                    onChanged: (value) async {
+                      await toggleAdminStatus(index, value);
+                      setState(() {});
+                      log(person.isAdmin.toString());
+                    },
+                    activeColor: Colors.green,
+                    inactiveThumbColor: Colors.red,
+                  ),
+                ),
+              ),
             ),
           );
         },

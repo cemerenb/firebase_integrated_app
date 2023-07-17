@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 bool isAdmin = false;
 bool isOwner = false;
+bool isLogedIn = false;
 String email = '';
 String name = '';
 String idNo = '';
@@ -81,6 +82,29 @@ getOwnerStatus(String uid) {
     log('Error getting document: $error');
   });
   return isOwner;
+}
+
+Future<bool> getLogedInStatus(String uid) async {
+  bool isLogedIn = false;
+
+  try {
+    final documentSnapshot =
+        await FirebaseFirestore.instance.collection('person').doc(uid).get();
+
+    if (documentSnapshot.exists) {
+      var data = documentSnapshot.data();
+      if (data != null) {
+        isLogedIn = data['isLogedIn'] ?? false;
+        log('isLogedIn: $isLogedIn');
+      }
+    } else {
+      log('No such document!');
+    }
+  } catch (error) {
+    log('Error getting document: $error');
+  }
+
+  return isLogedIn;
 }
 
 getEmail(String uid) {

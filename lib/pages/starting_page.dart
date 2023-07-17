@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:pirim_depo/pages/add_inventory_data.dart';
 import 'package:pirim_depo/pages/add_item.dart';
 import 'package:pirim_depo/pages/profile.dart';
@@ -71,9 +72,8 @@ class _StartPageState extends State<StartPage> {
         child: Scaffold(
           appBar: AppBar(
             automaticallyImplyLeading: false,
-            title: Text(
+            title: const Text(
               "Ana Sayfa",
-              style: Theme.of(context).textTheme.headlineSmall,
             ),
             actions: [
               hasProfileImage
@@ -103,8 +103,12 @@ class _StartPageState extends State<StartPage> {
                                           getImage().toString(),
                                         ))),
                               ),
-                              placeholder: (context, url) =>
-                                  const CircularProgressIndicator(),
+                              placeholder: (context, url) => Container(
+                                  width: 50,
+                                  height: 50,
+                                  decoration: const BoxDecoration(
+                                      shape: BoxShape.circle),
+                                  child: const CircularProgressIndicator()),
                               errorWidget: (context, url, error) => const Icon(
                                 Icons.error,
                                 color: Colors.red,
@@ -162,7 +166,14 @@ class _StartPageState extends State<StartPage> {
                                 width: MediaQuery.of(context).size.width / 2.3,
                                 height: 250,
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Color.fromARGB(255, 94, 94, 94),
+                                      blurRadius: 2,
+                                      offset: Offset(1, 1), // Shadow position
+                                    ),
+                                  ],
+                                  borderRadius: BorderRadius.circular(10),
                                   color:
                                       const Color.fromARGB(255, 161, 161, 161),
                                 ),
@@ -204,7 +215,7 @@ class _StartPageState extends State<StartPage> {
                                               color: const Color.fromARGB(
                                                   255, 161, 161, 161),
                                               borderRadius:
-                                                  BorderRadius.circular(15)),
+                                                  BorderRadius.circular(8)),
                                           height: 120,
                                           width: MediaQuery.of(context)
                                                   .size
@@ -243,7 +254,7 @@ class _StartPageState extends State<StartPage> {
                                               color: const Color.fromARGB(
                                                   255, 161, 161, 161),
                                               borderRadius:
-                                                  BorderRadius.circular(15)),
+                                                  BorderRadius.circular(8)),
                                           height: 120,
                                           width: MediaQuery.of(context)
                                                   .size
@@ -285,7 +296,7 @@ class _StartPageState extends State<StartPage> {
                                             color: const Color.fromARGB(
                                                 255, 161, 161, 161),
                                             borderRadius:
-                                                BorderRadius.circular(15)),
+                                                BorderRadius.circular(8)),
                                         height: 120,
                                         width:
                                             MediaQuery.of(context).size.width /
@@ -313,7 +324,7 @@ class _StartPageState extends State<StartPage> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
+                      padding: const EdgeInsets.only(top: 10.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -326,7 +337,7 @@ class _StartPageState extends State<StartPage> {
                                 width: MediaQuery.of(context).size.width / 2.3,
                                 height: 250,
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius: BorderRadius.circular(10),
                                   color:
                                       const Color.fromARGB(255, 161, 161, 161),
                                 ),
@@ -353,7 +364,7 @@ class _StartPageState extends State<StartPage> {
                                 width: MediaQuery.of(context).size.width / 2.3,
                                 height: 250,
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius: BorderRadius.circular(10),
                                   color:
                                       const Color.fromARGB(255, 161, 161, 161),
                                 ),
@@ -405,7 +416,7 @@ class _StartPageState extends State<StartPage> {
                 child: const Text('No'),
               ),
               ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(true),
+                onPressed: () => SystemNavigator.pop(),
                 //return true when click on "Yes"
                 child: const Text('Yes'),
               ),

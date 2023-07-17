@@ -65,7 +65,7 @@ class _ProfileState extends State<Profile> {
             builder: (BuildContext context, StateSetter setState) {
               return Container(
                 decoration: const BoxDecoration(
-                    color: Color.fromARGB(255, 212, 211, 211),
+                    color: Color.fromARGB(255, 122, 122, 122),
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(30),
                         topRight: Radius.circular(30))),
@@ -394,10 +394,14 @@ class _ProfileState extends State<Profile> {
             ),
             MaterialButton(
               onPressed: () async {
+                await FirebaseFirestore.instance
+                    .collection('person')
+                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                    .update({'isLogedIn': false});
                 AuthService.signOut();
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (builder) => const LoginPage()),
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
                   (route) => false,
                 );
               },
