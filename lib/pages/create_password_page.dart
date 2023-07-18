@@ -120,7 +120,8 @@ class _CreatePasswordPageState extends State<CreatePasswordPage> {
                             widget.isAdmin,
                             widget.name,
                             widget.idno,
-                            isOwner);
+                            isOwner,
+                            isLogedIn);
                         log('person created');
                         final usercred = await FirebaseAuth.instance
                             .signInWithEmailAndPassword(

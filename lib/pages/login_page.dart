@@ -1,16 +1,17 @@
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:pirim_depo/components/password_text_field_with_validation.dart';
 import 'package:pirim_depo/pages/create_account_page.dart';
 import 'package:pirim_depo/pages/starting_page.dart';
-import 'package:flutter/material.dart';
-import '../utils/dialog.dart';
-import '../utils/get_data_firestore.dart';
-import '../utils/navigation.dart';
-import '../components/password_text_field_with_validation.dart';
+import 'package:pirim_depo/utils/dialog.dart';
+import 'package:pirim_depo/utils/get_data_firestore.dart';
+import 'package:pirim_depo/utils/navigation.dart';
 
 class LoginPage extends StatefulWidget {
   final bool showLeading;
+
   const LoginPage({Key? key, this.showLeading = true}) : super(key: key);
 
   @override
@@ -20,10 +21,10 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   GlobalKey<PasswordTextFieldWithValidationState> textFieldKey =
       GlobalKey<PasswordTextFieldWithValidationState>();
+  final bool _validate = false;
   var user = FirebaseAuth.instance.currentUser;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final bool _validate = false;
   String? errorMessage;
   bool _isVisible = false;
   final auth = FirebaseAuth.instance;
@@ -31,10 +32,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     if (user == null) {
-      log('User not exist');
-    } else if (getLogedInStatus(FirebaseAuth.instance.currentUser!.uid)
-            .toString() ==
-        'false') {
+      log('User does not exist');
+    } else {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigation.addRoute(
           context,
@@ -72,13 +71,9 @@ class _LoginPageState extends State<LoginPage> {
               'Giriş yap',
               style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
             const Text('Devam etmek için giriş yapın'),
-            const SizedBox(
-              height: 30,
-            ),
+            const SizedBox(height: 30),
             _usernameTextField(),
             TextField(
               keyboardType: TextInputType.text,
@@ -196,25 +191,26 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future signIn(String email, String password, BuildContext context) async {
-    log(isLogedIn.toString());
     try {
       final usercred = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email.trim(),
         password: password.trim(),
       );
-      bool isLogedIn =
-          await getLogedInStatus(FirebaseAuth.instance.currentUser!.uid);
-      log(isLogedIn.toString());
       final user = usercred.user;
-      if (user?.emailVerified == true && mounted && isLogedIn == false) {
+
+      int a = await getLogedInStatus(user!.uid);
+      log(a.toString());
+      log("isVerified ${user.emailVerified}");
+      if (user.emailVerified == true && mounted && a == 0) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           try {
-            bool isAdmin =
-                getAdminStatus(FirebaseAuth.instance.currentUser!.uid);
             FirebaseFirestore.instance
                 .collection('person')
-                .doc(user?.uid)
-                .update({'isLogedIn': true});
+                .doc(user.uid)
+                .update({'isLogedIn': a + 1});
+
+            bool isAdmin =
+                getAdminStatus(FirebaseAuth.instance.currentUser!.uid);
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
@@ -227,19 +223,17 @@ class _LoginPageState extends State<LoginPage> {
             // ignore: empty_catches
           } catch (e) {}
         });
-      } else if (user?.emailVerified == false) {
+      } else if (user.emailVerified == false) {
         errorMessage =
             "Hesabınızı onaylamanız için onay maili yollandı\nLütfen gelen kutunuzu ve spamları kontrol edin ";
 
         setState(() {});
         showMyDialog(context, errorMessage.toString());
-        user?.sendEmailVerification();
+        user.sendEmailVerification();
         FirebaseAuth.instance.signOut();
-      } else if (isLogedIn == true) {
-        errorMessage =
-            'Hesap farklı cihazda açık lütfen tek cihazda giriş yapın';
+      } else if (a != 0) {
+        errorMessage = "Hesabınız başka bir cihazda açık\nLütfen çıkış yapın";
         setState(() {});
-        log(isLogedIn.toString());
         showMyDialog(context, errorMessage.toString());
         FirebaseAuth.instance.signOut();
       }

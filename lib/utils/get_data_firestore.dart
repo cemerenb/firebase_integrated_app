@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 bool isAdmin = false;
 bool isOwner = false;
-bool isLogedIn = false;
+int isLogedIn = 0;
 String email = '';
 String name = '';
 String idNo = '';
@@ -84,26 +84,36 @@ getOwnerStatus(String uid) {
   return isOwner;
 }
 
-Future<bool> getLogedInStatus(String uid) async {
-  bool isLogedIn = false;
+getLogedInStatus(String uid) async {
+  await FirebaseFirestore.instance
+      .collection('person')
+      .doc(uid)
+      .get()
+      .then((DocumentSnapshot? documentSnapshot) {
+    if (documentSnapshot != null && documentSnapshot.exists) {
+      // Cast data to Map<String, dynamic>
+      var data = documentSnapshot.data() as Map<String, dynamic>?;
 
-  try {
-    final documentSnapshot =
-        await FirebaseFirestore.instance.collection('person').doc(uid).get();
-
-    if (documentSnapshot.exists) {
-      var data = documentSnapshot.data();
       if (data != null) {
-        isLogedIn = data['isLogedIn'] ?? false;
-        log('isLogedIn: $isLogedIn');
+        // Access the isAdmin field value
+        isLogedIn = data['isLogedIn'];
+
+        // ignore: unnecessary_null_comparison
+        if (isLogedIn != null) {
+          // Now you can use the isAdmin value as needed
+          log('isLogedIn: $isLogedIn');
+        } else {
+          log('isLogedIn field is null');
+        }
+      } else {
+        log('Document data is null');
       }
     } else {
       log('No such document!');
     }
-  } catch (error) {
+  }).catchError((error) {
     log('Error getting document: $error');
-  }
-
+  });
   return isLogedIn;
 }
 

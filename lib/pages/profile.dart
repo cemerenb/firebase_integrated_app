@@ -397,7 +397,7 @@ class _ProfileState extends State<Profile> {
                 await FirebaseFirestore.instance
                     .collection('person')
                     .doc(FirebaseAuth.instance.currentUser!.uid)
-                    .update({'isLogedIn': false});
+                    .update({'isLogedIn': 0});
                 AuthService.signOut();
                 Navigator.pushAndRemoveUntil(
                   context,

@@ -18,7 +18,7 @@ import '../utils/navigation.dart';
 // ignore: must_be_immutable
 class StartPage extends StatefulWidget {
   final String email;
-  late bool isAdmin = false;
+  bool isAdmin;
 
   StartPage({super.key, required this.email, required this.isAdmin});
   final auth = FirebaseAuth.instance;
@@ -37,7 +37,7 @@ class _StartPageState extends State<StartPage> {
     super.initState();
 
     setState(() {
-      isAdmin = getAdminStatus(FirebaseAuth.instance.currentUser!.uid);
+      widget.isAdmin = getAdminStatus(FirebaseAuth.instance.currentUser!.uid);
     });
 
     getImage();
@@ -143,254 +143,162 @@ class _StartPageState extends State<StartPage> {
             ],
           ),
           body: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width,
-                child: Column(
+            child: Row(
+              children: [
+                Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0, bottom: 5),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              log(userName.toString());
-                              Navigation.addRoute(
-                                  context,
-                                  AddItem(
-                                      lastModifiedUser: userName.toString()));
-                            },
-                            child: Container(
-                                width: MediaQuery.of(context).size.width / 2.3,
-                                height: 250,
-                                decoration: BoxDecoration(
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      color: Color.fromARGB(255, 94, 94, 94),
-                                      blurRadius: 2,
-                                      offset: Offset(1, 1), // Shadow position
-                                    ),
-                                  ],
-                                  borderRadius: BorderRadius.circular(10),
-                                  color:
-                                      const Color.fromARGB(255, 161, 161, 161),
-                                ),
-                                child: const Column(
-                                  children: [
-                                    Spacer(),
-                                    Icon(
-                                      Icons.add,
-                                      size: 100,
-                                    ),
-                                    Text(
-                                      'Ürün Ekle',
-                                      style: TextStyle(fontSize: 25),
-                                    ),
-                                    Spacer(),
-                                  ],
-                                )),
+                    GestureDetector(
+                      onTap: () {
+                        log(userName.toString());
+                        Navigation.addRoute(context,
+                            AddItem(lastModifiedUser: userName.toString()));
+                      },
+                      child: Container(
+                          width: MediaQuery.of(context).size.width / 2.3,
+                          height: 250,
+                          decoration: BoxDecoration(
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color.fromARGB(255, 94, 94, 94),
+                                blurRadius: 2,
+                                offset: Offset(1, 1), // Shadow position
+                              ),
+                            ],
+                            borderRadius: BorderRadius.circular(10),
+                            color: const Color.fromARGB(255, 161, 161, 161),
                           ),
+                          child: const Column(
+                            children: [
+                              Spacer(),
+                              Icon(
+                                Icons.add,
+                                size: 100,
+                              ),
+                              Text(
+                                'Ürün Ekle',
+                                style: TextStyle(fontSize: 25),
+                              ),
+                              Spacer(),
+                            ],
+                          )),
+                    ),
 
-                          //Scan qr and barcode button
-
-                          Container(
-                              width: MediaQuery.of(context).size.width / 2.3,
-                              height: 250,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: Colors.transparent),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () => Navigation.addRoute(
-                                            context, const SearchByName()),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                              color: const Color.fromARGB(
-                                                  255, 161, 161, 161),
-                                              borderRadius:
-                                                  BorderRadius.circular(8)),
-                                          height: 120,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              4.9,
-                                          child: const Column(
-                                            children: [
-                                              Spacer(),
-                                              Padding(
-                                                padding: EdgeInsets.all(10.0),
-                                                child: Text(
-                                                  'Ürün Adı ile Ara',
-                                                  style:
-                                                      TextStyle(fontSize: 20),
-                                                ),
-                                              ),
-                                              Spacer(),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      GestureDetector(
-                                        onTap: () async {
-                                          scanResult = await scanQR();
-                                          log("Scan ${scanResult.toString()}");
-                                          if (mounted) {
-                                            Navigation.addRoute(
-                                                context,
-                                                ScanResult(
-                                                    serialNo:
-                                                        scanResult ?? ''));
-                                          }
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                              color: const Color.fromARGB(
-                                                  255, 161, 161, 161),
-                                              borderRadius:
-                                                  BorderRadius.circular(8)),
-                                          height: 120,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              4.9,
-                                          child: const Column(
-                                            children: [
-                                              Spacer(),
-                                              Icon(
-                                                Icons.qr_code_2_outlined,
-                                                size: 50,
-                                              ),
-                                              Text(
-                                                'QR Tara',
-                                                style: TextStyle(fontSize: 20),
-                                              ),
-                                              Spacer(),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                    //Scan qr and barcode button
+                    GestureDetector(
+                      onTap: () {
+                        Navigation.addRoute(context, const AddInventoryData());
+                      },
+                      child: Container(
+                          width: MediaQuery.of(context).size.width / 2.3,
+                          height: 250,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: const Color.fromARGB(255, 161, 161, 161),
+                          ),
+                          child: const Column(
+                            children: [
+                              Spacer(),
+                              Icon(
+                                Icons.shelves,
+                                size: 100,
+                              ),
+                              Text(
+                                'Stok Gir',
+                                style: TextStyle(fontSize: 25),
+                              ),
+                              Spacer(),
+                            ],
+                          )),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        GestureDetector(
+                          onTap: () => Navigation.addRoute(
+                              context, const SearchByName()),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: const Color.fromARGB(255, 161, 161, 161),
+                                borderRadius: BorderRadius.circular(8)),
+                            height: 120,
+                            width: MediaQuery.of(context).size.width / 4.9,
+                            child: const Column(
+                              children: [
+                                Spacer(),
+                                Padding(
+                                  padding: EdgeInsets.all(10.0),
+                                  child: Text(
+                                    'Ürün Adı ile Ara',
+                                    style: TextStyle(fontSize: 20),
                                   ),
-                                  GestureDetector(
-                                    onTap: () async {
-                                      scanResult = await scanQR();
-                                      log("Scan ${scanResult.toString()}");
-                                      if (mounted) {
-                                        Navigation.addRoute(
-                                            context,
-                                            ScanResult(
-                                                serialNo: scanResult ?? ''));
-                                      }
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(top: 10),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                            color: const Color.fromARGB(
-                                                255, 161, 161, 161),
-                                            borderRadius:
-                                                BorderRadius.circular(8)),
-                                        height: 120,
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                2.3,
-                                        child: const Column(
-                                          children: [
-                                            Spacer(),
-                                            Icon(
-                                              Icons.camera_alt_outlined,
-                                              size: 50,
-                                            ),
-                                            Text(
-                                              'Barkod Tara',
-                                              style: TextStyle(fontSize: 20),
-                                            ),
-                                            Spacer()
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )),
-                        ],
+                                ),
+                                Spacer(),
+                              ],
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () async {
+                            scanResult = await scanQR();
+                            log("Scan ${scanResult.toString()}");
+                            if (mounted) {
+                              Navigation.addRoute(context,
+                                  ScanResult(serialNo: scanResult ?? ''));
+                            }
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: const Color.fromARGB(255, 161, 161, 161),
+                                borderRadius: BorderRadius.circular(8)),
+                            height: 120,
+                            width: MediaQuery.of(context).size.width / 4.9,
+                            child: const Column(
+                              children: [
+                                Spacer(),
+                                Icon(
+                                  Icons.qr_code_2_outlined,
+                                  size: 50,
+                                ),
+                                Text(
+                                  'QR Tara',
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                                Spacer(),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Visibility(
+                      visible: isAdmin,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width / 2.3,
+                        height: 250,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: const Color.fromARGB(255, 161, 161, 161),
+                        ),
+                        child: const Icon(
+                          Icons.add,
+                          size: 100,
+                        ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Navigation.addRoute(
-                                  context, const AddInventoryData());
-                            },
-                            child: Container(
-                                width: MediaQuery.of(context).size.width / 2.3,
-                                height: 250,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color:
-                                      const Color.fromARGB(255, 161, 161, 161),
-                                ),
-                                child: const Column(
-                                  children: [
-                                    Spacer(),
-                                    Icon(
-                                      Icons.shelves,
-                                      size: 100,
-                                    ),
-                                    Text(
-                                      'Stok Gir',
-                                      style: TextStyle(fontSize: 25),
-                                    ),
-                                    Spacer(),
-                                  ],
-                                )),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 15.0),
-                            child: Visibility(
-                              visible: widget.isAdmin,
-                              child: Container(
-                                width: MediaQuery.of(context).size.width / 2.3,
-                                height: 250,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color:
-                                      const Color.fromARGB(255, 161, 161, 161),
-                                ),
-                                child: const Icon(
-                                  Icons.add,
-                                  size: 100,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(),
-                            child: Visibility(
-                              visible: !widget.isAdmin,
-                              child: SizedBox(
-                                width: MediaQuery.of(context).size.width / 2.3,
-                                height: 250,
-                              ),
-                            ),
-                          ),
-                        ],
+                    Visibility(
+                      visible: isAdmin,
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width / 2.3,
+                        height: 250,
                       ),
                     ),
                   ],
                 ),
-              ),
+              ],
             ),
           ),
         ));
