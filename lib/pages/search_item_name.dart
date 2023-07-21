@@ -5,10 +5,7 @@ import 'package:pirim_depo/utils/navigation.dart';
 import 'package:flutter/material.dart';
 
 class SearchByName extends StatefulWidget {
-  const SearchByName({Key? key})
-      : super(
-          key: key,
-        );
+  const SearchByName({Key? key}) : super(key: key);
 
   @override
   State<SearchByName> createState() => _SearchSerialState();

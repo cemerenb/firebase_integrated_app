@@ -6,26 +6,31 @@ import 'package:pirim_depo/utils/dialog.dart';
 import 'package:pirim_depo/utils/navigation.dart';
 import 'package:flutter/material.dart';
 
-// ignore: must_be_immutable
 class AddInventorySearchResult extends StatefulWidget {
-  late String itemName = '';
-  late String serialNo = '';
-  late String expiryDate = '';
-  late String acceptDate = '';
-  late String piece = '';
-  late String locationCode = '';
-  late String lastModifiedTime = '';
-  late String lastModifiedUser = '';
-  AddInventorySearchResult(
-      {super.key,
-      required this.serialNo,
-      required this.itemName,
-      required this.expiryDate,
-      required this.acceptDate,
-      required this.piece,
-      required this.locationCode,
-      required this.lastModifiedTime,
-      required this.lastModifiedUser});
+  final String itemName;
+  final String serialNo;
+  final String expiryDate;
+  final String acceptDate;
+  final String piece;
+  final String locationCode;
+  final String lastModifiedTime;
+  final String lastModifiedUser;
+  final String name;
+  final String userName;
+
+  const AddInventorySearchResult({
+    Key? key,
+    required this.itemName,
+    required this.serialNo,
+    required this.expiryDate,
+    required this.acceptDate,
+    required this.piece,
+    required this.locationCode,
+    required this.lastModifiedTime,
+    required this.lastModifiedUser,
+    required this.name,
+    required this.userName,
+  }) : super(key: key);
 
   @override
   State<AddInventorySearchResult> createState() =>
@@ -62,10 +67,16 @@ class _AddInventorySearchResultState extends State<AddInventorySearchResult> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: IconButton(
-            onPressed: () {
-              Navigation.addRoute(context, const AddInventoryData());
-            },
-            icon: const Icon(Icons.arrow_back)),
+          onPressed: () {
+            Navigation.addRoute(
+                context,
+                AddInventoryData(
+                  name: widget.name,
+                  userName: widget.userName,
+                ));
+          },
+          icon: const Icon(Icons.arrow_back),
+        ),
         title: Text(widget.itemName),
       ),
       body: SingleChildScrollView(
@@ -98,8 +109,9 @@ class _AddInventorySearchResultState extends State<AddInventorySearchResult> {
                           width: MediaQuery.of(context).size.width * 0.35,
                           height: 50,
                           decoration: BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(5)),
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
                           child: MaterialButton(
                             onPressed: () async {
                               await FirebaseFirestore.instance
@@ -115,7 +127,12 @@ class _AddInventorySearchResultState extends State<AddInventorySearchResult> {
                                 });
 
                                 Navigation.addRoute(
-                                    context, const AddInventoryData());
+                                  context,
+                                  AddInventoryData(
+                                    name: widget.name,
+                                    userName: widget.userName,
+                                  ),
+                                );
                               }
                             },
                             child: const Text(
@@ -128,8 +145,9 @@ class _AddInventorySearchResultState extends State<AddInventorySearchResult> {
                           width: MediaQuery.of(context).size.width * 0.35,
                           height: 50,
                           decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 145, 145, 145),
-                              borderRadius: BorderRadius.circular(5)),
+                            color: const Color.fromARGB(255, 145, 145, 145),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
                           child: MaterialButton(
                             onPressed: () async {
                               try {
@@ -141,7 +159,7 @@ class _AddInventorySearchResultState extends State<AddInventorySearchResult> {
                                     .collection('items')
                                     .doc(serialController.text)
                                     .update({
-                                  'locationCode': locationController.text
+                                  'locationCode': locationController.text,
                                 });
 
                                 if (mounted) {
@@ -172,7 +190,12 @@ class _AddInventorySearchResultState extends State<AddInventorySearchResult> {
     );
   }
 
-  SizedBox searchResultItem(BuildContext context, data, text, bool isEnabled) {
+  SizedBox searchResultItem(
+    BuildContext context,
+    String data,
+    TextEditingController text,
+    bool isEnabled,
+  ) {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.8,
       child: Column(
@@ -217,31 +240,37 @@ class _AddInventorySearchResultState extends State<AddInventorySearchResult> {
     );
   }
 
-  Future<void> showDeleteDialog(context, String data) async {
+  Future<void> showDeleteDialog(BuildContext context, String data) async {
     return showDialog<void>(
-        context: context,
-        barrierDismissible: false, // user must tap button!
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: <Widget>[
-                  Text(data),
-                ],
-              ),
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(data),
+              ],
             ),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('Tamam'),
-                onPressed: () {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const AddInventoryData()));
-                },
-              ),
-            ],
-          );
-        });
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Tamam'),
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddInventoryData(
+                      name: widget.name,
+                      userName: widget.userName,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }

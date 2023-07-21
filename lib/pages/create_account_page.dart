@@ -8,7 +8,7 @@ import '../utils/navigation.dart';
 import '../utils/validators.dart';
 
 class CreateAccountPage extends StatefulWidget {
-  const CreateAccountPage({super.key});
+  const CreateAccountPage({Key? key}) : super(key: key);
 
   @override
   State<CreateAccountPage> createState() => _CreateAccountPageState();
@@ -20,220 +20,210 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   final _name = TextEditingController();
   final _idno = TextEditingController();
   final formKey = GlobalKey<FormState>();
-  late String errorText = '';
-  late String errorText1 = '';
-  final bool _uservalidate = false;
-  final bool _namevalidate = false;
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  String errorText = '';
+  String errorText1 = '';
 
   @override
   void dispose() {
     _user.dispose();
     _email.dispose();
+    _name.dispose();
+    _idno.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'Hesabını oluştur',
-            style: Theme.of(context)
-                .textTheme
-                .headlineSmall
-                ?.copyWith(fontSize: 20, fontWeight: FontWeight.w600),
-          ),
+      appBar: AppBar(
+        title: Text(
+          'Hesabını oluştur',
+          style: Theme.of(context)
+              .textTheme
+              .headlineSmall
+              ?.copyWith(fontSize: 20, fontWeight: FontWeight.w600),
         ),
-        body: SingleChildScrollView(
-          child: Form(
-            key: formKey,
-            child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Kayıt Ol',
-                          style: TextStyle(
-                              fontSize: 25, fontWeight: FontWeight.bold)),
-                      const SizedBox(
-                        height: 30,
+      ),
+      body: SingleChildScrollView(
+        child: Form(
+          key: formKey,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Kayıt Ol',
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 30),
+                TextFormField(
+                  controller: _user,
+                  validator: (value) => Validators.usernameValidator(value),
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.name,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(
+                        color: Color.fromARGB(255, 148, 146, 146),
                       ),
-                      TextFormField(
-                        controller: _user,
-                        validator: (value) =>
-                            Validators.usernameValidator(value),
-                        textInputAction: TextInputAction.next,
-                        keyboardType: TextInputType.name,
-                        decoration: InputDecoration(
-                            errorText: _uservalidate
-                                ? "Kullanıcı adı boş olamaz"
-                                : null,
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                    color: Color.fromARGB(255, 148, 146, 146))),
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide:
-                                    const BorderSide(color: Colors.black)),
-                            hintText: 'Kullanıcı Adı',
-                            contentPadding: const EdgeInsets.all(20.0)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(color: Colors.black),
+                    ),
+                    hintText: 'Kullanıcı Adı',
+                    contentPadding: const EdgeInsets.all(20.0),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _name,
+                  validator: (value) => Validators.nameValidator(value),
+                  textInputAction: TextInputAction.next,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(
+                        color: Color.fromARGB(255, 148, 146, 146),
                       ),
-                      const SizedBox(
-                        height: 20,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(color: Colors.black),
+                    ),
+                    hintText: 'Ad Soyad',
+                    contentPadding: const EdgeInsets.all(20.0),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _email,
+                  onChanged: (value) async {
+                    errorText1 = await emailValidator(_email.text);
+                    log(errorText1);
+                    setState(() {});
+                  },
+                  textInputAction: TextInputAction.done,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    errorText: errorText1,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(
+                        color: Color.fromARGB(255, 148, 146, 146),
                       ),
-                      TextFormField(
-                        controller: _name,
-                        validator: (value) => Validators.nameValidator(value),
-                        textInputAction: TextInputAction.next,
-                        decoration: InputDecoration(
-                            errorText:
-                                _namevalidate ? "Ad soyad boş olamaz" : null,
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                    color: Color.fromARGB(255, 148, 146, 146))),
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide:
-                                    const BorderSide(color: Colors.black)),
-                            hintText: 'Ad Soyad',
-                            contentPadding: const EdgeInsets.all(20.0)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(color: Colors.black),
+                    ),
+                    hintText: 'Email',
+                    contentPadding: const EdgeInsets.all(20.0),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _idno,
+                  textInputAction: TextInputAction.done,
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) async {
+                    errorText = await idNoValidator(_idno.text);
+                    log(errorText);
+                    setState(() {});
+                  },
+                  decoration: InputDecoration(
+                    errorText: errorText,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(
+                        color: Color.fromARGB(255, 148, 146, 146),
                       ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      TextFormField(
-                        controller: _email,
-                        onChanged: (value) async {
-                          errorText1 = await emailValidator(_email.text);
-                          log(errorText1);
-                          setState(() {});
-                        },
-                        textInputAction: TextInputAction.done,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                            errorText: errorText1,
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                    color: Color.fromARGB(255, 148, 146, 146))),
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide:
-                                    const BorderSide(color: Colors.black)),
-                            hintText: 'Email',
-                            contentPadding: const EdgeInsets.all(20.0)),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      TextFormField(
-                        controller: _idno,
-                        textInputAction: TextInputAction.done,
-                        keyboardType: TextInputType.number,
-                        onChanged: (value) async {
-                          errorText = await idNoValidator(_idno.text);
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(color: Colors.black),
+                    ),
+                    hintText: 'Tc Kimlik No',
+                    contentPadding: const EdgeInsets.all(20.0),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 30),
+                  child: Center(
+                    child: MaterialButton(
+                      minWidth: double.infinity,
+                      onPressed: () {
+                        if (errorText == '' &&
+                            errorText1 == '' &&
+                            _email.text.isNotEmpty &&
+                            _idno.text.isNotEmpty) {
+                          if (formKey.currentState?.validate() ?? false) {
+                            Navigation.addRoute(
+                              context,
+                              CreatePasswordPage(
+                                username: _user.text,
+                                email: _email.text,
+                                name: _name.text,
+                                idno: _idno.text,
+                              ),
+                            );
+                          }
+                        } else {
                           log(errorText);
                           setState(() {});
-                        },
-                        decoration: InputDecoration(
-                            errorText: errorText,
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                    color: Color.fromARGB(255, 148, 146, 146))),
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide:
-                                    const BorderSide(color: Colors.black)),
-                            hintText: 'Tc Kimlik No',
-                            contentPadding: const EdgeInsets.all(20.0)),
+                        }
+                      },
+                      color: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 30),
-                        child: Center(
-                          child: MaterialButton(
-                            minWidth: double.infinity,
-                            onPressed: () {
-                              if (errorText == '' &&
-                                  errorText1 == "" &&
-                                  _email.text.isNotEmpty &&
-                                  _idno.text.isNotEmpty) {
-                                if (formKey.currentState?.validate() ?? false) {
-                                  Navigation.addRoute(
-                                      context,
-                                      CreatePasswordPage(
-                                        username: _user.text,
-                                        email: _email.text,
-                                        name: _name.text,
-                                        idno: _idno.text,
-                                      ));
-                                }
-                              } else {
-                                log(errorText);
-                                setState(() {});
-                              }
-                            },
-                            color: Colors.black,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            child: const Text(
-                              'Şifre Oluştur',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                      )
-                    ])),
+                      child: const Text(
+                        'Şifre Oluştur',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 }
 
-idNoValidator(String idNo) async {
+Future<String> idNoValidator(String idNo) async {
   String error = '';
+
   if (idNo.isEmpty || idNo.length != 11) {
     error = 'Geçersiz kimlik numarası';
     log(error);
     return error;
   }
 
-  // Firestore'da "person" koleksiyonuna erişim sağlayan bir referans oluşturun
-  final CollectionReference personCollection =
-      FirebaseFirestore.instance.collection('person');
+  final personCollection = FirebaseFirestore.instance.collection('person');
 
-  // "person" koleksiyonundaki belgeleri alın
-  final QuerySnapshot snapshot = await personCollection.get();
+  final snapshot = await personCollection.get();
 
-  // Verilen kimlik numarasını kontrol edin
-  for (final DocumentSnapshot doc in snapshot.docs) {
-    final Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
-
-    if (data != null && data['idNo'] == idNo) {
+  for (final doc in snapshot.docs) {
+    final data = doc.data();
+    if (data['idNo'] == idNo) {
       error = 'Bu Tc Kimlik Numarası Kullanılmaktadır';
       log(error);
-      return error = '';
+      return error;
     }
   }
 
-  // Geçerli bir kimlik numarası olduğunu belirtin
-  return error;
+  return '';
 }
 
-emailValidator(String? mail) async {
+Future<String> emailValidator(String? mail) async {
   String mailErrorMessage = 'Geçersiz email';
-  if (mail == null) {
-    return mailErrorMessage;
-  }
 
-  if (mail.isEmpty) {
+  if (mail == null || mail.isEmpty) {
     return mailErrorMessage;
   }
 
@@ -243,31 +233,22 @@ emailValidator(String? mail) async {
 
   final splittedMail = mail.split('@');
 
-  if (splittedMail.length != 2) {
+  if (splittedMail.length != 2 || !splittedMail[1].contains('.')) {
     return mailErrorMessage;
   }
 
-  final rightPart = splittedMail[1];
+  final personCollection = FirebaseFirestore.instance.collection('person');
 
-  if (!rightPart.contains('.')) {
-    return mailErrorMessage;
-  }
-  final CollectionReference personCollection =
-      FirebaseFirestore.instance.collection('person');
+  final snapshot = await personCollection.get();
 
-  // "person" koleksiyonundaki belgeleri alın
-  final QuerySnapshot snapshot = await personCollection.get();
-
-  // Verilen kimlik numarasını kontrol edin
-  for (final DocumentSnapshot doc in snapshot.docs) {
-    final Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
-
-    if (data != null && data['email'] == mail) {
+  for (final doc in snapshot.docs) {
+    final data = doc.data();
+    if (data['email'] == mail) {
       mailErrorMessage = 'Bu Email Numarası Kullanılmaktadır';
       log(mailErrorMessage);
       return mailErrorMessage;
     }
   }
 
-  return mailErrorMessage = '';
+  return '';
 }

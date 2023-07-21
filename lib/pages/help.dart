@@ -3,7 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-final Uri _url = Uri.parse('mailto:<depo.deneme01@gmail.com>?subject=&body=');
+final Uri _emailUrl =
+    Uri.parse('mailto:depo.deneme01@gmail.com?subject=&body=');
 
 class Help extends StatelessWidget {
   const Help({super.key});
@@ -20,8 +21,10 @@ class Help extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               GestureDetector(
-                onTap: () async => await launchUrl(Uri.parse(
-                    'https://api.whatsapp.com/send?phone=5469394850')),
+                onTap: () async {
+                  await launchUrl(Uri.parse(
+                      'https://api.whatsapp.com/send?phone=5469394850'));
+                },
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
@@ -51,7 +54,7 @@ class Help extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  _launchUrl();
+                  _launchEmail();
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -85,8 +88,9 @@ class Help extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 GestureDetector(
-                  onTap: () async =>
-                      await launchUrl(Uri.parse('tel:<+905469394850>')),
+                  onTap: () async {
+                    await launchUrl(Uri.parse('tel:+905469394850'));
+                  },
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
@@ -115,8 +119,9 @@ class Help extends StatelessWidget {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () async =>
-                      await launchUrl(Uri.parse('sms:<+905469394850>')),
+                  onTap: () async {
+                    await launchUrl(Uri.parse('sms:+905469394850'));
+                  },
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
@@ -152,11 +157,11 @@ class Help extends StatelessWidget {
     );
   }
 
-  Future<void> _launchUrl() async {
-    log('url launch');
-    if (!await launchUrl(_url)) {
-      log('error while url launch');
-      throw Exception('Could not launch $_url');
+  Future<void> _launchEmail() async {
+    log('Launching email');
+    if (!await launchUrl(_emailUrl)) {
+      log('Error while launching email');
+      throw Exception('Could not launch email');
     }
   }
 }

@@ -1,30 +1,70 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:pirim_depo/pages/login_page.dart';
+import 'package:provider/provider.dart';
+import 'theme/theme_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => ThemeManager(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  Widget currentPage = const LoginPage();
-
+  @override
   @override
   Widget build(BuildContext context) {
+    final themeManager = Provider.of<ThemeManager>(context);
+    // ignore: prefer_typing_uninitialized_variables
     return MaterialApp(
       title: "İlk uygulamam",
       debugShowCheckedModeBanner: false,
-      darkTheme: ThemeData.dark().copyWith(
+      theme: ThemeData(
+        hintColor: Colors.black,
+        primaryColor: Colors.black,
+        inputDecorationTheme:
+            const InputDecorationTheme(suffixIconColor: Colors.black),
+        buttonTheme: const ButtonThemeData(
+          buttonColor: Colors.black,
+        ),
+        progressIndicatorTheme:
+            const ProgressIndicatorThemeData(color: Colors.white),
+        listTileTheme: const ListTileThemeData(contentPadding: EdgeInsets.zero),
+        fontFamily: 'Dancing',
+        appBarTheme: const AppBarTheme(
+          titleTextStyle: TextStyle(
+              color: Colors.black, fontSize: 20, fontFamily: 'Poppins'),
+          centerTitle: true,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
+        colorScheme: const ColorScheme(
+            background: Colors.white,
+            brightness: Brightness.light,
+            error: Colors.black,
+            onBackground: Colors.black,
+            onError: Colors.black,
+            onPrimary: Colors.black,
+            onSecondary: Colors.black,
+            onSurface: Colors.black,
+            primary: Color.fromARGB(255, 82, 82, 82),
+            secondary: Color.fromARGB(255, 255, 255, 255),
+            surface: Color.fromARGB(255, 255, 255, 255)),
+      ),
+      darkTheme: ThemeData(
+        fontFamily: 'Poppins',
         primaryColor: Colors.white,
         hintColor: Colors.white,
         inputDecorationTheme:
@@ -34,10 +74,10 @@ class _MyAppState extends State<MyApp> {
         progressIndicatorTheme:
             const ProgressIndicatorThemeData(color: Colors.white),
         appBarTheme: const AppBarTheme(
-          titleTextStyle: TextStyle(color: Colors.white, fontSize: 18),
+          titleTextStyle: TextStyle(
+              color: Colors.white, fontSize: 20, fontFamily: 'Poppins'),
           centerTitle: true,
-          backgroundColor: Colors.transparent,
-          foregroundColor: Color.fromARGB(255, 255, 255, 255),
+          color: Colors.transparent,
           elevation: 0,
         ),
         colorScheme: const ColorScheme(
@@ -53,38 +93,10 @@ class _MyAppState extends State<MyApp> {
             secondary: Colors.white,
             surface: Colors.white),
       ),
-      themeMode: ThemeMode.system,
-      theme: ThemeData.light().copyWith(
-        hintColor: Colors.black,
-        primaryColor: Colors.black,
-        inputDecorationTheme:
-            const InputDecorationTheme(suffixIconColor: Colors.black),
-        buttonTheme: const ButtonThemeData(buttonColor: Colors.black),
-        progressIndicatorTheme:
-            const ProgressIndicatorThemeData(color: Colors.white),
-        listTileTheme: const ListTileThemeData(contentPadding: EdgeInsets.zero),
-        appBarTheme: const AppBarTheme(
-          titleTextStyle: TextStyle(color: Colors.black, fontSize: 18),
-          centerTitle: true,
-          systemOverlayStyle: SystemUiOverlayStyle.light,
-          backgroundColor: Colors.transparent,
-          foregroundColor: Colors.black,
-          elevation: 0,
-        ),
-        colorScheme: const ColorScheme(
-            background: Colors.white,
-            brightness: Brightness.light,
-            error: Colors.black,
-            onBackground: Colors.black,
-            onError: Colors.black,
-            onPrimary: Colors.black,
-            onSecondary: Colors.black,
-            onSurface: Colors.black,
-            primary: Color.fromARGB(255, 82, 82, 82),
-            secondary: Colors.black,
-            surface: Colors.black),
-      ),
-      home: currentPage,
+      themeMode: themeManager.currentThemeMode == ThemeModeType.light
+          ? ThemeMode.light
+          : ThemeMode.dark,
+      home: const LoginPage(),
     );
   }
 }

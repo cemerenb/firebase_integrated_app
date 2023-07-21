@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 
-// ignore: must_be_immutable
 class SearchResult extends StatefulWidget {
-  late String itemName = '';
-  late String serialNo = '';
-  late String expiryDate = '';
-  late String acceptDate = '';
-  late String piece = '';
-  late String locationCode = '';
-  late String lastModifiedTime = '';
-  late String lastModifiedUser = '';
+  final String itemName;
+  final String serialNo;
+  final String expiryDate;
+  final String acceptDate;
+  final String piece;
+  final String locationCode;
+  final String lastModifiedTime;
+  final String lastModifiedUser;
 
-  SearchResult(
-      {super.key,
-      required this.serialNo,
-      required this.itemName,
-      required this.expiryDate,
-      required this.acceptDate,
-      required this.piece,
-      required this.locationCode,
-      required this.lastModifiedTime,
-      required this.lastModifiedUser});
+  const SearchResult({
+    super.key,
+    required this.serialNo,
+    required this.itemName,
+    required this.expiryDate,
+    required this.acceptDate,
+    required this.piece,
+    required this.locationCode,
+    required this.lastModifiedTime,
+    required this.lastModifiedUser,
+  });
 
   @override
   State<SearchResult> createState() => _SearchResultState();
@@ -58,7 +58,7 @@ class _SearchResultState extends State<SearchResult> {
     );
   }
 
-  SizedBox searchResultItem(BuildContext context, data, text) {
+  Widget searchResultItem(BuildContext context, String data, String text) {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.8,
       child: Column(
@@ -76,8 +76,9 @@ class _SearchResultState extends State<SearchResult> {
           ),
           Container(
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(width: 1, color: Colors.black)),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(width: 1, color: Colors.black),
+            ),
             height: 45,
             width: MediaQuery.of(context).size.width * 0.8,
             child: Row(
@@ -91,7 +92,7 @@ class _SearchResultState extends State<SearchResult> {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

@@ -47,21 +47,26 @@ dependencies:
   firebase_auth: ^4.1.0
   flutter_barcode_scanner: ^2.0.0
   pattern_formatter: ^3.0.0
-  hive_flutter: ^1.1.0
   flutter_cache_manager: ^3.3.1
   cached_network_image: ^3.2.3
   mailer: ^6.0.1
   url_launcher: ^6.1.12
   time_machine: ^0.9.17
   home_widget: ^0.3.0
-
+  dynamic_height_grid_view: ^0.0.3
+  shared_preferences: ^2.2.0
+  provider: ^6.0.5
+  animate_gradient: ^0.0.2+1
+  image: ^4.0.17
+  connectivity_plus: ^4.0.1
+  
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by th is
+  # encourage good coding practices. The lint set provided by this
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
@@ -94,23 +99,21 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
-  #
-  # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/custom-fonts/#from-packages
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Light.ttf
+    - family: Dancing
+      fonts:
+        - asset: assets/fonts/DancingScript-VariableFont_wght.ttf
+
   assets:
     - assets/img/pirim.png
     - assets/img/whatsapp.png
     - assets/img/email.png
     - assets/img/call.png
     - assets/img/message.png
+    - assets/img/warehouse.png
+    - assets/img/bg.jpg
+    - assets/img/bg2.jpg
+    - assets/img/bg3.jpg

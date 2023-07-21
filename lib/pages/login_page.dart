@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pirim_depo/components/password_text_field_with_validation.dart';
@@ -28,20 +29,29 @@ class _LoginPageState extends State<LoginPage> {
   String? errorMessage;
   bool _isVisible = false;
   final auth = FirebaseAuth.instance;
-
+  late String name = '';
+  late String userName = '';
   @override
   void initState() {
     if (user == null) {
       log('User does not exist');
     } else {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigation.addRoute(
-          context,
-          StartPage(
-            email: user!.email.toString(),
-            isAdmin: getAdminStatus(user!.uid),
-          ),
-        );
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        userName = await getUserName(FirebaseAuth.instance.currentUser!.uid);
+        name = await getName(FirebaseAuth.instance.currentUser!.uid);
+        log('name: $name');
+        log('userName: $userName');
+        if (mounted) {
+          Navigation.addRoute(
+            context,
+            StartPage(
+              email: user!.email.toString(),
+              isAdmin: getAdminStatus(user!.uid),
+              name: name,
+              userName: userName,
+            ),
+          );
+        }
       });
       log(user!.email.toString());
     }
@@ -203,6 +213,8 @@ class _LoginPageState extends State<LoginPage> {
       log("isVerified ${user.emailVerified}");
       if (user.emailVerified == true && mounted && a == 0) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
+          log('name: $name');
+          log('userName: $userName');
           try {
             FirebaseFirestore.instance
                 .collection('person')
@@ -215,6 +227,8 @@ class _LoginPageState extends State<LoginPage> {
               context,
               MaterialPageRoute(
                 builder: (context) => StartPage(
+                  name: name,
+                  userName: userName,
                   email: email,
                   isAdmin: isAdmin,
                 ),
@@ -245,5 +259,13 @@ class _LoginPageState extends State<LoginPage> {
         setState(() {});
       });
     }
+  }
+
+  hasInternetConnection() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none) {
+      return false;
+    }
+    return true;
   }
 }

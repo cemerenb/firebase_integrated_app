@@ -8,10 +8,10 @@ import 'package:pirim_depo/utils/navigation.dart';
 import 'package:flutter/material.dart';
 
 class AddInventoryData extends StatefulWidget {
-  const AddInventoryData({Key? key})
-      : super(
-          key: key,
-        );
+  final String name;
+  final String userName;
+  const AddInventoryData(
+      {super.key, required this.name, required this.userName});
 
   @override
   State<AddInventoryData> createState() => _SearchSerialState();
@@ -19,7 +19,6 @@ class AddInventoryData extends StatefulWidget {
 
 class _SearchSerialState extends State<AddInventoryData> {
   bool isVisible = false;
-  bool isCategorised = false;
   final priceController = TextEditingController();
   final myController = TextEditingController();
   final searchController = TextEditingController();
@@ -47,15 +46,21 @@ class _SearchSerialState extends State<AddInventoryData> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: IconButton(
-            onPressed: () {
-              Navigation.addRoute(
-                  context,
-                  StartPage(
-                      email: getEmail(FirebaseAuth.instance.currentUser!.uid),
-                      isAdmin: getAdminStatus(
-                          FirebaseAuth.instance.currentUser!.uid)));
-            },
-            icon: const Icon(Icons.arrow_back)),
+          onPressed: () {
+            Navigation.addRoute(
+              context,
+              StartPage(
+                email: getEmail(FirebaseAuth.instance.currentUser!.uid),
+                isAdmin: getAdminStatus(
+                  FirebaseAuth.instance.currentUser!.uid,
+                ),
+                name: widget.name,
+                userName: widget.userName,
+              ),
+            );
+          },
+          icon: const Icon(Icons.arrow_back),
+        ),
         title: Visibility(
           visible: isVisible,
           child: TextFormField(
@@ -119,7 +124,9 @@ class _SearchSerialState extends State<AddInventoryData> {
             width: 200,
             height: 200,
             decoration: BoxDecoration(
-                color: Colors.grey, borderRadius: BorderRadius.circular(20)),
+              color: Colors.grey,
+              borderRadius: BorderRadius.circular(20),
+            ),
             child: const Center(
               child: Padding(
                 padding: EdgeInsets.all(10.0),
@@ -163,13 +170,19 @@ class _SearchSerialState extends State<AddInventoryData> {
                   piece: piece,
                   lastModifiedTime: lastModifiedTime,
                   lastModifiedUser: lastModifiedUser,
+                  name: widget.name,
+                  userName: widget.userName,
                 ),
               );
             },
             child: Padding(
               padding: const EdgeInsets.only(left: 15.0, top: 5, bottom: 2),
               child: ListTile(
-                title: SizedBox(height: 20, width: 200, child: Text(itemName)),
+                title: SizedBox(
+                  height: 20,
+                  width: 200,
+                  child: Text(itemName),
+                ),
                 trailing: Text(
                   serialNo,
                   style: const TextStyle(fontSize: 15),
@@ -186,7 +199,9 @@ class _SearchSerialState extends State<AddInventoryData> {
     return InputDecoration(
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: const BorderSide(color: Color.fromARGB(255, 148, 146, 146)),
+        borderSide: const BorderSide(
+          color: Color.fromARGB(255, 148, 146, 146),
+        ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),

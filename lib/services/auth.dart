@@ -26,7 +26,8 @@ class AuthService {
       String name,
       String idno,
       bool isOwner,
-      int isLogedIn) async {
+      int isLogedIn,
+      String profileUrl) async {
     var user = await _auth.createUserWithEmailAndPassword(
         email: email, password: password);
     await _firestore.collection('person').doc(user.user!.uid).set({
@@ -37,6 +38,7 @@ class AuthService {
       'idNo': idno,
       'isOwner': isOwner,
       'isLogedIn': isLogedIn,
+      'profileUrl': profileUrl
     });
     return user.user;
   }
