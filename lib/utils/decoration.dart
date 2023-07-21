@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_randomcolor/flutter_randomcolor.dart';
 import 'dart:math' as math;
 
+import 'package:pirim_depo/utils/text.dart';
+
 class MainPageBoxStyle {
   Random random = Random();
   var options = Options(format: Format.hex, colorType: ColorType.green);
@@ -45,7 +47,7 @@ class Decoration {
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: const BorderSide(color: Colors.black)),
-        hintText: 'Şifre',
+        hintText: passwordText,
         contentPadding: const EdgeInsets.all(20.0));
   }
 }

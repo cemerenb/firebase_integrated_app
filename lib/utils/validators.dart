@@ -1,9 +1,11 @@
 // ignore: unused_import
 import 'dart:developer';
 
+import 'package:pirim_depo/utils/text.dart';
+
 class Validators {
   static String? emailValidator(String? mail) {
-    String mailErrorMessage = 'Geçersiz email';
+    String mailErrorMessage = invalidEmail;
     if (mail == null) {
       return mailErrorMessage;
     }
@@ -32,7 +34,7 @@ class Validators {
   }
 
   static String? usernameValidator(String? username) {
-    const invalidUsernameMessage = 'Geçersiz kullanıcı adı';
+    String invalidUsernameMessage = invalidUserName;
     if (username == null) {
       return invalidUsernameMessage;
     }
@@ -49,7 +51,7 @@ class Validators {
   }
 
   static String? nameValidator(String? username) {
-    const invalidUsernameMessage = 'Geçersiz kullanıcı adı';
+    String invalidUsernameMessage = invalidName;
     if (username == null) {
       return invalidUsernameMessage;
     }

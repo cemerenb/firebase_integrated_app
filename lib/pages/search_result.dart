@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pirim_depo/utils/text.dart';
 
 class SearchResult extends StatefulWidget {
   final String itemName;
@@ -40,16 +41,16 @@ class _SearchResultState extends State<SearchResult> {
           children: [
             Column(
               children: [
-                searchResultItem(context, 'Seri No', widget.serialNo),
+                searchResultItem(context, serialNoText, widget.serialNo),
+                searchResultItem(context, expiryDateText, widget.expiryDate),
+                searchResultItem(context, acceptDateText, widget.acceptDate),
                 searchResultItem(
-                    context, 'Son Kullanma Tarihi', widget.expiryDate),
-                searchResultItem(context, 'Kabul Tarihi', widget.acceptDate),
-                searchResultItem(context, 'Lokasyon Kodu', widget.locationCode),
-                searchResultItem(context, 'Son Değişiklik Yapan Kullanıcı',
-                    widget.lastModifiedUser),
+                    context, locationCodeText, widget.locationCode),
                 searchResultItem(
-                    context, 'Son Değişiklik Tarihi', widget.lastModifiedTime),
-                searchResultItem(context, 'Adet', widget.piece),
+                    context, lastModifiedUserText, widget.lastModifiedUser),
+                searchResultItem(
+                    context, lastModifiedTimeText, widget.lastModifiedTime),
+                searchResultItem(context, pieceText, widget.piece),
               ],
             ),
           ],

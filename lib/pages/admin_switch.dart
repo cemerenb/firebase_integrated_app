@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:pirim_depo/utils/text.dart';
 
 class Person {
   final String email;
@@ -60,7 +61,7 @@ class _AdminSwitchPageState extends State<AdminSwitchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Yönetici Paneli'),
+        title: Text(adminPanel),
       ),
       body: ListView.builder(
         itemCount: personList.length,

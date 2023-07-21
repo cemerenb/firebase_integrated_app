@@ -3,9 +3,9 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pirim_depo/pages/create_password_page.dart';
 import 'package:flutter/material.dart';
-
+import '../utils/text_fields.dart';
 import '../utils/navigation.dart';
-import '../utils/validators.dart';
+import '../utils/text.dart';
 
 class CreateAccountPage extends StatefulWidget {
   const CreateAccountPage({Key? key}) : super(key: key);
@@ -37,7 +37,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Hesabını oluştur',
+          createAccountText,
           style: Theme.of(context)
               .textTheme
               .headlineSmall
@@ -52,144 +52,120 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Kayıt Ol',
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                Text(
+                  register,
+                  style: const TextStyle(
+                      fontSize: 25, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 30),
-                TextFormField(
-                  controller: _user,
-                  validator: (value) => Validators.usernameValidator(value),
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.name,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                        color: Color.fromARGB(255, 148, 146, 146),
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.black),
-                    ),
-                    hintText: 'Kullanıcı Adı',
-                    contentPadding: const EdgeInsets.all(20.0),
-                  ),
-                ),
+                CreateAccountPageUsernameTextField(user: _user),
                 const SizedBox(height: 20),
-                TextFormField(
-                  controller: _name,
-                  validator: (value) => Validators.nameValidator(value),
-                  textInputAction: TextInputAction.next,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                        color: Color.fromARGB(255, 148, 146, 146),
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.black),
-                    ),
-                    hintText: 'Ad Soyad',
-                    contentPadding: const EdgeInsets.all(20.0),
-                  ),
-                ),
+                CreateAccountNameTextField(name: _name),
                 const SizedBox(height: 20),
-                TextFormField(
-                  controller: _email,
-                  onChanged: (value) async {
-                    errorText1 = await emailValidator(_email.text);
-                    log(errorText1);
-                    setState(() {});
-                  },
-                  textInputAction: TextInputAction.done,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    errorText: errorText1,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                        color: Color.fromARGB(255, 148, 146, 146),
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.black),
-                    ),
-                    hintText: 'Email',
-                    contentPadding: const EdgeInsets.all(20.0),
-                  ),
-                ),
+                createAccountEmailTextField(),
                 const SizedBox(height: 20),
-                TextFormField(
-                  controller: _idno,
-                  textInputAction: TextInputAction.done,
-                  keyboardType: TextInputType.number,
-                  onChanged: (value) async {
-                    errorText = await idNoValidator(_idno.text);
-                    log(errorText);
-                    setState(() {});
-                  },
-                  decoration: InputDecoration(
-                    errorText: errorText,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                        color: Color.fromARGB(255, 148, 146, 146),
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.black),
-                    ),
-                    hintText: 'Tc Kimlik No',
-                    contentPadding: const EdgeInsets.all(20.0),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 30),
-                  child: Center(
-                    child: MaterialButton(
-                      minWidth: double.infinity,
-                      onPressed: () {
-                        if (errorText == '' &&
-                            errorText1 == '' &&
-                            _email.text.isNotEmpty &&
-                            _idno.text.isNotEmpty) {
-                          if (formKey.currentState?.validate() ?? false) {
-                            Navigation.addRoute(
-                              context,
-                              CreatePasswordPage(
-                                username: _user.text,
-                                email: _email.text,
-                                name: _name.text,
-                                idno: _idno.text,
-                              ),
-                            );
-                          }
-                        } else {
-                          log(errorText);
-                          setState(() {});
-                        }
-                      },
-                      color: Colors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Text(
-                        'Şifre Oluştur',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ),
+                createAccountIdNoTextField(),
+                createAccountNavigatorButton(context),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Padding createAccountNavigatorButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 30),
+      child: Center(
+        child: MaterialButton(
+          minWidth: double.infinity,
+          onPressed: () {
+            if (errorText == '' &&
+                errorText1 == '' &&
+                _email.text.isNotEmpty &&
+                _idno.text.isNotEmpty) {
+              if (formKey.currentState?.validate() ?? false) {
+                Navigation.addRoute(
+                  context,
+                  CreatePasswordPage(
+                    username: _user.text,
+                    email: _email.text,
+                    name: _name.text,
+                    idno: _idno.text,
+                  ),
+                );
+              }
+            } else {
+              log(errorText);
+              setState(() {});
+            }
+          },
+          color: Colors.black,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Text(
+            createPassword,
+            style: const TextStyle(color: Colors.white),
+          ),
+        ),
+      ),
+    );
+  }
+
+  TextFormField createAccountIdNoTextField() {
+    return TextFormField(
+      controller: _idno,
+      textInputAction: TextInputAction.done,
+      keyboardType: TextInputType.number,
+      onChanged: (value) async {
+        errorText = await idNoValidator(_idno.text);
+        log(errorText);
+        setState(() {});
+      },
+      decoration: InputDecoration(
+        errorText: errorText,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(
+            color: Color.fromARGB(255, 148, 146, 146),
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.black),
+        ),
+        hintText: idNo,
+        contentPadding: const EdgeInsets.all(20.0),
+      ),
+    );
+  }
+
+  TextFormField createAccountEmailTextField() {
+    return TextFormField(
+      controller: _email,
+      onChanged: (value) async {
+        errorText1 = await emailValidator(_email.text);
+        log(errorText1);
+        setState(() {});
+      },
+      textInputAction: TextInputAction.done,
+      keyboardType: TextInputType.emailAddress,
+      decoration: InputDecoration(
+        errorText: errorText1,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(
+            color: Color.fromARGB(255, 148, 146, 146),
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.black),
+        ),
+        hintText: emailText,
+        contentPadding: const EdgeInsets.all(20.0),
       ),
     );
   }
@@ -199,7 +175,7 @@ Future<String> idNoValidator(String idNo) async {
   String error = '';
 
   if (idNo.isEmpty || idNo.length != 11) {
-    error = 'Geçersiz kimlik numarası';
+    error = invalidIdNo;
     log(error);
     return error;
   }
@@ -211,7 +187,7 @@ Future<String> idNoValidator(String idNo) async {
   for (final doc in snapshot.docs) {
     final data = doc.data();
     if (data['idNo'] == idNo) {
-      error = 'Bu Tc Kimlik Numarası Kullanılmaktadır';
+      error = idNoIsUsing;
       log(error);
       return error;
     }
@@ -221,7 +197,7 @@ Future<String> idNoValidator(String idNo) async {
 }
 
 Future<String> emailValidator(String? mail) async {
-  String mailErrorMessage = 'Geçersiz email';
+  String mailErrorMessage = invalidEmail;
 
   if (mail == null || mail.isEmpty) {
     return mailErrorMessage;
@@ -244,7 +220,7 @@ Future<String> emailValidator(String? mail) async {
   for (final doc in snapshot.docs) {
     final data = doc.data();
     if (data['email'] == mail) {
-      mailErrorMessage = 'Bu Email Numarası Kullanılmaktadır';
+      mailErrorMessage = emailIsUsing;
       log(mailErrorMessage);
       return mailErrorMessage;
     }

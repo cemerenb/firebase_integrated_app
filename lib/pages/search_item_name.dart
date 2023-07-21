@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pirim_depo/pages/search_result.dart';
 import 'package:pirim_depo/utils/navigation.dart';
 import 'package:flutter/material.dart';
+import 'package:pirim_depo/utils/text.dart';
 
 class SearchByName extends StatefulWidget {
   const SearchByName({Key? key}) : super(key: key);
@@ -103,13 +104,13 @@ class _SearchSerialState extends State<SearchByName> {
             height: 200,
             decoration: BoxDecoration(
                 color: Colors.grey, borderRadius: BorderRadius.circular(20)),
-            child: const Center(
+            child: Center(
               child: Padding(
-                padding: EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(10.0),
                 child: Text(
-                  'Gösterilecek Ürün Yok',
+                  noItemShowing,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 25),
+                  style: const TextStyle(fontSize: 25),
                 ),
               ),
             ),
@@ -177,7 +178,7 @@ class _SearchSerialState extends State<SearchByName> {
           color: Color.fromARGB(0, 129, 129, 129),
         ),
       ),
-      hintText: 'Ara',
+      hintText: search,
       contentPadding: const EdgeInsets.all(5.0),
     );
   }

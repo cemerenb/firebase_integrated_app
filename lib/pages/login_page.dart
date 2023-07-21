@@ -9,6 +9,7 @@ import 'package:pirim_depo/pages/starting_page.dart';
 import 'package:pirim_depo/utils/dialog.dart';
 import 'package:pirim_depo/utils/get_data_firestore.dart';
 import 'package:pirim_depo/utils/navigation.dart';
+import 'package:pirim_depo/utils/text.dart';
 
 class LoginPage extends StatefulWidget {
   final bool showLeading;
@@ -183,7 +184,7 @@ class _LoginPageState extends State<LoginPage> {
       controller: emailController,
       textInputAction: TextInputAction.next,
       decoration: InputDecoration(
-        errorText: _validate ? "Email boş olamaz" : null,
+        errorText: _validate ? emailCantBeEmpty : null,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(
@@ -194,7 +195,7 @@ class _LoginPageState extends State<LoginPage> {
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(color: Colors.black),
         ),
-        hintText: 'Email',
+        hintText: emailText,
         contentPadding: const EdgeInsets.all(20.0),
       ),
     );
@@ -238,15 +239,14 @@ class _LoginPageState extends State<LoginPage> {
           } catch (e) {}
         });
       } else if (user.emailVerified == false) {
-        errorMessage =
-            "Hesabınızı onaylamanız için onay maili yollandı\nLütfen gelen kutunuzu ve spamları kontrol edin ";
+        errorMessage = confirmation;
 
         setState(() {});
         showMyDialog(context, errorMessage.toString());
         user.sendEmailVerification();
         FirebaseAuth.instance.signOut();
       } else if (a != 0) {
-        errorMessage = "Hesabınız başka bir cihazda açık\nLütfen çıkış yapın";
+        errorMessage = accountInUseAnotherDevice;
         setState(() {});
         showMyDialog(context, errorMessage.toString());
         FirebaseAuth.instance.signOut();

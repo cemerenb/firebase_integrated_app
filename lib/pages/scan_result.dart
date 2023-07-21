@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';
 
+import 'package:pirim_depo/utils/text.dart';
+
 class ScanResult extends StatefulWidget {
   final String serialNo;
 
@@ -57,15 +59,15 @@ class ScanResultState extends State<ScanResult> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  searchResultItem(context, 'Seri No', serialNo),
-                  searchResultItem(context, 'Son Kullanma Tarihi', expiryDate),
-                  searchResultItem(context, 'Kabul Tarihi', acceptDate),
-                  searchResultItem(context, 'Adet', piece),
-                  searchResultItem(context, 'Lokasyon Kodu', locationCode),
-                  searchResultItem(context, 'Son Değişiklik Yapan Kullanıcı',
-                      lastModifiedUser),
+                  searchResultItem(context, serialNoText, serialNo),
+                  searchResultItem(context, expiryDateText, expiryDate),
+                  searchResultItem(context, acceptDateText, acceptDate),
+                  searchResultItem(context, pieceText, piece),
+                  searchResultItem(context, locationCodeText, locationCode),
                   searchResultItem(
-                      context, 'Son Değişiklik Tarihi', lastModifiedTime),
+                      context, lastModifiedUserText, lastModifiedUser),
+                  searchResultItem(
+                      context, lastModifiedTimeText, lastModifiedTime),
                 ],
               ),
             )
@@ -79,13 +81,13 @@ class ScanResultState extends State<ScanResult> {
                     color: Colors.grey,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Padding(
-                      padding: EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(10.0),
                       child: Text(
-                        'Ürün Bulunamadı',
+                        noItemShowing,
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 25),
+                        style: const TextStyle(fontSize: 25),
                       ),
                     ),
                   ),

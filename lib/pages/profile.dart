@@ -17,9 +17,11 @@ import 'package:pirim_depo/pages/starting_page.dart';
 import 'package:pirim_depo/services/auth.dart';
 import 'package:pirim_depo/utils/get_data_firestore.dart';
 import 'package:pirim_depo/utils/navigation.dart';
+import 'package:pirim_depo/utils/text.dart';
 
 import 'login_page.dart';
 
+// ignore: must_be_immutable
 class Profile extends StatefulWidget {
   late String profileImageUrl;
   late String name;
@@ -102,12 +104,12 @@ class _ProfileState extends State<Profile> {
                         log('setState');
                       });
                     },
-                    child: const SizedBox(
+                    child: SizedBox(
                       height: 70,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Padding(
+                          const Padding(
                             padding: EdgeInsets.only(left: 20.0, right: 20),
                             child: Icon(
                               Icons.photo_camera,
@@ -115,8 +117,8 @@ class _ProfileState extends State<Profile> {
                             ),
                           ),
                           Text(
-                            'Kamera',
-                            style: TextStyle(fontSize: 20),
+                            camera,
+                            style: const TextStyle(fontSize: 20),
                           )
                         ],
                       ),
@@ -130,12 +132,12 @@ class _ProfileState extends State<Profile> {
                         log('setState');
                       });
                     },
-                    child: const SizedBox(
+                    child: SizedBox(
                       height: 70,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Padding(
+                          const Padding(
                             padding: EdgeInsets.only(left: 20.0, right: 20),
                             child: Icon(
                               Icons.photo,
@@ -143,8 +145,8 @@ class _ProfileState extends State<Profile> {
                             ),
                           ),
                           Text(
-                            'Galeri',
-                            style: TextStyle(fontSize: 20),
+                            gallery,
+                            style: const TextStyle(fontSize: 20),
                           )
                         ],
                       ),
@@ -218,7 +220,7 @@ class _ProfileState extends State<Profile> {
           },
           icon: const Icon(Icons.arrow_back),
         ),
-        title: const Text('Profilim'),
+        title: Text(profile),
       ),
       body: Center(
         child: Column(
@@ -347,11 +349,11 @@ class _ProfileState extends State<Profile> {
                       Icons.info_outline,
                       size: 30,
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 20),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20),
                       child: Text(
-                        'Hakkında',
-                        style: TextStyle(
+                        about,
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
                         ),
@@ -388,11 +390,11 @@ class _ProfileState extends State<Profile> {
                       Icons.help_outline,
                       size: 30,
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 20),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20),
                       child: Text(
-                        'Yardım',
-                        style: TextStyle(
+                        help,
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
                         ),
@@ -426,11 +428,11 @@ class _ProfileState extends State<Profile> {
                       Icons.settings_outlined,
                       size: 30,
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 20),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20),
                       child: Text(
-                        'Ayarlar',
-                        style: TextStyle(
+                        settings,
+                        style: const TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w500),
                       ),
                     ),
@@ -465,11 +467,11 @@ class _ProfileState extends State<Profile> {
                         Icons.admin_panel_settings_outlined,
                         size: 30,
                       ),
-                      const Padding(
-                        padding: EdgeInsets.only(left: 20),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20),
                         child: Text(
-                          'Yönetici Paneli',
-                          style: TextStyle(
+                          adminPanel,
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w500,
                           ),
@@ -525,11 +527,11 @@ class _ProfileState extends State<Profile> {
                       Icons.logout_outlined,
                       size: 30,
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 20),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20),
                       child: Text(
-                        'Çıkış Yap',
-                        style: TextStyle(
+                        logOut,
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
                         ),

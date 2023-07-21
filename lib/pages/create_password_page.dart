@@ -7,6 +7,7 @@ import 'package:pirim_depo/utils/dialog.dart';
 import 'package:pirim_depo/utils/get_data_firestore.dart';
 import 'package:pirim_depo/utils/navigation.dart';
 import 'package:flutter/material.dart';
+import 'package:pirim_depo/utils/text.dart';
 
 import '../components/password_text_field_with_validation.dart';
 import '../services/auth.dart';
@@ -79,13 +80,13 @@ class _CreatePasswordPageState extends State<CreatePasswordPage> {
         FirebaseAuth.instance.signOut();
 
         if (response == null && mounted) {
-          errorMessage = 'Bir hata oluştu. Lütfen daha sonra tekrar deneyin';
+          errorMessage = passwordError;
           showMyDialog(context, errorMessage.toString());
           log(errorMessage.toString());
         } else {
           showMyDialog(
             context,
-            'Hesabınızı onaylamanız için onay maili gönderildi.\nLütfen gelen kutunuzu ve spam klasörünü kontrol edin',
+            confirmation,
           );
           Navigation.addRoute(context, const LoginPage());
           return;
@@ -101,9 +102,9 @@ class _CreatePasswordPageState extends State<CreatePasswordPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text(
-          'Hesabını oluştur',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+        title: Text(
+          createAccountText,
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
         ),
       ),
       body: Container(
@@ -111,13 +112,12 @@ class _CreatePasswordPageState extends State<CreatePasswordPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Şifre oluştur',
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            Text(
+              createPassword,
+              style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            const Text(
-                'Lütfen aşağıdaki kriterleri karşılayan bir şifre oluşturun'),
+            Text(creatPasswordRequirements),
             const SizedBox(height: 30),
             Padding(
               padding: const EdgeInsets.only(left: 2.0),
@@ -144,9 +144,9 @@ class _CreatePasswordPageState extends State<CreatePasswordPage> {
                     onPressed: () {
                       Navigation.addRoute(context, const AcceptTerm());
                     },
-                    child: const Text('Sorumluluk metnini'),
+                    child: Text(responsibilityText),
                   ),
-                  const Text('okudum onaylıyorum.'),
+                  Text(read),
                 ],
               ),
             ),
@@ -160,9 +160,9 @@ class _CreatePasswordPageState extends State<CreatePasswordPage> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Text(
-                    'Hesap oluştur',
-                    style: TextStyle(color: Colors.white),
+                  child: Text(
+                    createAccountText,
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ),
               ),

@@ -14,10 +14,9 @@ import 'package:pirim_depo/utils/get_data_firestore.dart';
 import 'package:pirim_depo/utils/scan.dart';
 import 'package:pirim_depo/utils/navigation.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import '../theme/theme_manager.dart';
+import 'package:pirim_depo/utils/text.dart';
 
-ThemeManager _themeManager = ThemeManager();
-
+// ignore: must_be_immutable
 class StartPage extends StatefulWidget {
   final String email;
   final String name;
@@ -85,7 +84,7 @@ class _StartPageState extends State<StartPage> {
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: const Text("Ana Sayfa"),
+          title: Text(homePage),
           bottom: PreferredSize(
               preferredSize: const Size.fromHeight(1),
               child: Container(
@@ -230,14 +229,14 @@ class _StartPageState extends State<StartPage> {
                               ),
                               Container(),
                               Container(),
-                              const Row(
+                              Row(
                                 children: [
                                   SizedBox(
                                     width: 100,
                                     child: Text(
-                                      'Ürün Ekle',
+                                      addItemText,
                                       textAlign: TextAlign.justify,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 27,
                                         color: Colors.white,
                                       ),
@@ -282,17 +281,17 @@ class _StartPageState extends State<StartPage> {
                             borderRadius: BorderRadius.circular(10),
                             color: const Color.fromARGB(255, 161, 161, 161),
                           ),
-                          child: const Column(
+                          child: Column(
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(top: 30.0),
+                                padding: const EdgeInsets.only(top: 30.0),
                                 child: Text(
-                                  'Stok Gir',
-                                  style: TextStyle(
+                                  addInventoryData,
+                                  style: const TextStyle(
                                       fontSize: 30, color: Colors.white),
                                 ),
                               ),
-                              Spacer(),
+                              const Spacer(),
                             ],
                           ),
                         ),
@@ -335,18 +334,18 @@ class _StartPageState extends State<StartPage> {
                                             borderRadius:
                                                 BorderRadius.circular(8),
                                           ),
-                                          child: const Column(
+                                          child: Column(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
                                             children: [
-                                              Icon(
+                                              const Icon(
                                                 Icons.search,
                                                 size: 50,
                                                 color: Colors.white,
                                               ),
                                               Text(
-                                                'Ürün Ara',
-                                                style: TextStyle(
+                                                searchItem,
+                                                style: const TextStyle(
                                                     fontSize: 18,
                                                     color: Colors.white),
                                               ),
@@ -381,21 +380,21 @@ class _StartPageState extends State<StartPage> {
                                             borderRadius:
                                                 BorderRadius.circular(8),
                                           ),
-                                          child: const Column(
+                                          child: Column(
                                             children: [
-                                              Spacer(),
-                                              Icon(
+                                              const Spacer(),
+                                              const Icon(
                                                 Icons.qr_code_scanner,
                                                 size: 50,
                                                 color: Colors.white,
                                               ),
                                               Text(
-                                                'QR Tara',
-                                                style: TextStyle(
+                                                scanQrText,
+                                                style: const TextStyle(
                                                     fontSize: 18,
                                                     color: Colors.white),
                                               ),
-                                              Spacer(),
+                                              const Spacer(),
                                             ],
                                           ),
                                         ),
@@ -435,21 +434,21 @@ class _StartPageState extends State<StartPage> {
                                             borderRadius:
                                                 BorderRadius.circular(8),
                                           ),
-                                          child: const Column(
+                                          child: Column(
                                             children: [
-                                              Spacer(),
-                                              Icon(
+                                              const Spacer(),
+                                              const Icon(
                                                 Icons.camera_alt_outlined,
                                                 size: 50,
                                                 color: Colors.white,
                                               ),
                                               Text(
-                                                'Barkod Tara',
-                                                style: TextStyle(
+                                                scanBarcodeText,
+                                                style: const TextStyle(
                                                     fontSize: 18,
                                                     color: Colors.white),
                                               ),
-                                              Spacer(),
+                                              const Spacer(),
                                             ],
                                           ),
                                         ),
@@ -483,16 +482,16 @@ class _StartPageState extends State<StartPage> {
     return await showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Çıkış yap'),
-            content: const Text('Uygulamadan çıkmak istiyor musunuz?'),
+            title: Text(logOut),
+            content: Text(wantToExit),
             actions: [
               ElevatedButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('No'),
+                child: Text(no),
               ),
               ElevatedButton(
                 onPressed: () => SystemNavigator.pop(),
-                child: const Text('Yes'),
+                child: Text(yes),
               ),
             ],
           ),

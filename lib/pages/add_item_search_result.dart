@@ -5,6 +5,9 @@ import 'package:pirim_depo/pages/add_inventory_data.dart';
 import 'package:pirim_depo/utils/dialog.dart';
 import 'package:pirim_depo/utils/navigation.dart';
 import 'package:flutter/material.dart';
+import '../utils/text.dart';
+
+import '../utils/add_item_search_result_item.dart';
 
 class AddInventorySearchResult extends StatefulWidget {
   final String itemName;
@@ -85,18 +88,19 @@ class _AddInventorySearchResultState extends State<AddInventorySearchResult> {
           children: [
             Column(
               children: [
-                searchResultItem(context, 'Seri No', serialController, false),
                 searchResultItem(
-                    context, 'Son Kullanma Tarihi', expiryController, false),
+                    context, serialNoText, serialController, false),
                 searchResultItem(
-                    context, 'Kabul Tarihi', acceptController, false),
-                searchResultItem(context, 'Son Değişiklik Yapan Kullanıcı',
-                    lastUserController, false),
-                searchResultItem(context, 'Son Değişiklik Tarihi',
-                    lastTimeController, false),
+                    context, expiryDateText, expiryController, false),
                 searchResultItem(
-                    context, 'Lokasyon Kodu', locationController, true),
-                searchResultItem(context, 'Adet', pieceController, true),
+                    context, acceptDateText, acceptController, false),
+                searchResultItem(
+                    context, lastModifiedUserText, lastUserController, false),
+                searchResultItem(
+                    context, lastModifiedTimeText, lastTimeController, false),
+                searchResultItem(
+                    context, locationCodeText, locationController, true),
+                searchResultItem(context, pieceText, pieceController, true),
                 Padding(
                   padding: const EdgeInsets.only(top: 20.0),
                   child: SizedBox(
@@ -105,79 +109,8 @@ class _AddInventorySearchResultState extends State<AddInventorySearchResult> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.35,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: MaterialButton(
-                            onPressed: () async {
-                              await FirebaseFirestore.instance
-                                  .collection('items')
-                                  .doc(serialController.text)
-                                  .delete();
-
-                              log('item deleted');
-                              if (mounted) {
-                                setState(() async {
-                                  await showDeleteDialog(
-                                      context, 'Ürün başarıyla silindi');
-                                });
-
-                                Navigation.addRoute(
-                                  context,
-                                  AddInventoryData(
-                                    name: widget.name,
-                                    userName: widget.userName,
-                                  ),
-                                );
-                              }
-                            },
-                            child: const Text(
-                              'Sil',
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.35,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 145, 145, 145),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: MaterialButton(
-                            onPressed: () async {
-                              try {
-                                await FirebaseFirestore.instance
-                                    .collection('items')
-                                    .doc(serialController.text)
-                                    .update({'piece': pieceController.text});
-                                await FirebaseFirestore.instance
-                                    .collection('items')
-                                    .doc(serialController.text)
-                                    .update({
-                                  'locationCode': locationController.text,
-                                });
-
-                                if (mounted) {
-                                  showMyDialog(
-                                      context, 'Ürün başarıyla güncellendi');
-                                }
-                                setState(() {});
-                              } catch (e) {
-                                showMyDialog(context, 'Bir hata oldu');
-                                setState(() {});
-                              }
-                            },
-                            child: const Text(
-                              'Kaydet',
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ),
-                        ),
+                        deleteButton(context),
+                        updateItemButton(context),
                       ],
                     ),
                   ),
@@ -190,87 +123,80 @@ class _AddInventorySearchResultState extends State<AddInventorySearchResult> {
     );
   }
 
-  SizedBox searchResultItem(
-    BuildContext context,
-    String data,
-    TextEditingController text,
-    bool isEnabled,
-  ) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.8,
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Text(
-                  data,
-                  style: const TextStyle(fontSize: 18),
-                ),
-              ],
-            ),
-          ),
-          TextField(
-            enabled: isEnabled,
-            controller: text,
-            textInputAction: TextInputAction.next,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(
-                  color: Color.fromARGB(255, 148, 146, 146),
-                ),
-              ),
-              disabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(
-                  color: Color.fromARGB(255, 148, 146, 146),
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: Colors.black),
-              ),
-              contentPadding: const EdgeInsets.all(20.0),
-            ),
-          )
-        ],
+  Container updateItemButton(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.35,
+      height: 50,
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 145, 145, 145),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: MaterialButton(
+        onPressed: () async {
+          try {
+            await FirebaseFirestore.instance
+                .collection('items')
+                .doc(serialController.text)
+                .update({'piece': pieceController.text});
+            await FirebaseFirestore.instance
+                .collection('items')
+                .doc(serialController.text)
+                .update({
+              'locationCode': locationController.text,
+            });
+
+            if (mounted) {
+              showMyDialog(context, itemUpdated);
+            }
+            setState(() {});
+          } catch (e) {
+            showMyDialog(context, error);
+            setState(() {});
+          }
+        },
+        child: Text(
+          save,
+          style: const TextStyle(fontSize: 16),
+        ),
       ),
     );
   }
 
-  Future<void> showDeleteDialog(BuildContext context, String data) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(data),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Tamam'),
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddInventoryData(
-                      name: widget.name,
-                      userName: widget.userName,
-                    ),
-                  ),
-                );
-              },
-            ),
-          ],
-        );
-      },
+  Container deleteButton(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.35,
+      height: 50,
+      decoration: BoxDecoration(
+        color: Colors.red,
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: MaterialButton(
+        onPressed: () async {
+          await FirebaseFirestore.instance
+              .collection('items')
+              .doc(serialController.text)
+              .delete();
+
+          log('item deleted');
+          if (mounted) {
+            setState(() async {
+              await deleteDialog(context, widget.name, widget.userName);
+            });
+
+            Navigation.addRoute(
+              context,
+              AddInventoryData(
+                name: widget.name,
+                userName: widget.userName,
+              ),
+            );
+          }
+        },
+        child: Text(
+          delete,
+          style: const TextStyle(fontSize: 16),
+        ),
+      ),
     );
   }
 }

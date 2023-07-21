@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pirim_depo/utils/text.dart';
 import 'package:provider/provider.dart';
 import '../theme/theme_manager.dart';
 
@@ -15,7 +16,7 @@ class _SettingsPageState extends State<SettingsPage> {
     final themeManager = Provider.of<ThemeManager>(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ayarlar'),
+        title: Text(settings),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -23,9 +24,9 @@ class _SettingsPageState extends State<SettingsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
-            const Text(
-              'Tema',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              themeText,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             Switch(
@@ -36,10 +37,6 @@ class _SettingsPageState extends State<SettingsPage> {
               },
             ),
             const SizedBox(height: 20),
-            const Text(
-              'Mevcut Tema Modu:',
-              style: TextStyle(fontSize: 16),
-            ),
           ],
         ),
       ),

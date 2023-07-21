@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pirim_depo/utils/text.dart';
+
+import '../pages/add_inventory_data.dart';
 
 Future<void> showMyDialog(context, String data) async {
   return showDialog<void>(
@@ -23,4 +26,38 @@ Future<void> showMyDialog(context, String data) async {
           ],
         );
       });
+}
+
+Future<void> deleteDialog(BuildContext context, name, userName) {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              Text(itemDeleted),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: Text(okay),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddInventoryData(
+                    name: name,
+                    userName: userName,
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      );
+    },
+  );
 }

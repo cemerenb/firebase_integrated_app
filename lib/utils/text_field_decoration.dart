@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pirim_depo/utils/text.dart';
 
 class TextFielfDecoration {
   TextField textInputDecoration(inputController) {
@@ -14,7 +15,7 @@ class TextFielfDecoration {
           focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: const BorderSide(color: Colors.black)),
-          hintText: 'Email',
+          hintText: emailText,
           contentPadding: const EdgeInsets.all(20.0)),
     );
   }

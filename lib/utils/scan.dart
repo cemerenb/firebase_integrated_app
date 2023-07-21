@@ -1,13 +1,14 @@
 import 'dart:developer';
 
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:pirim_depo/utils/text.dart';
 
 scanBarcode() async {
   log('barcoda girdi');
   String scanResult;
   try {
     scanResult = await FlutterBarcodeScanner.scanBarcode(
-        '#ff6666', 'İptal', true, ScanMode.BARCODE);
+        '#ff6666', cancel, true, ScanMode.BARCODE);
   } catch (e) {
     scanResult = "Bir hata oluştu!";
   }
@@ -20,7 +21,7 @@ scanQR() async {
   String scanResult;
   try {
     scanResult = await FlutterBarcodeScanner.scanBarcode(
-        '#ff6666', 'İptal', true, ScanMode.QR);
+        '#ff6666', cancel, true, ScanMode.QR);
   } catch (e) {
     scanResult = "Bir hata oluştu!";
   }
