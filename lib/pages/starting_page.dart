@@ -5,7 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:pirim_depo/pages/add_inventory_data.dart';
+import 'package:pirim_depo/pages/add_Inventory_Data';
 import 'package:pirim_depo/pages/add_item.dart';
 import 'package:pirim_depo/pages/profile.dart';
 import 'package:pirim_depo/pages/scan_result.dart';

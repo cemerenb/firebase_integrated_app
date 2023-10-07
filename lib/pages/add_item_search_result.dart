@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:pirim_depo/pages/add_inventory_data.dart';
+import 'package:pirim_depo/pages/add_Inventory_Data';
 import 'package:pirim_depo/utils/dialog.dart';
 import 'package:pirim_depo/utils/navigation.dart';
 import 'package:flutter/material.dart';

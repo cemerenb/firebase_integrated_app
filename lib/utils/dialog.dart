@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pirim_depo/utils/text.dart';
 
-import '../pages/add_inventory_data.dart';
+import '../pages/add_Inventory_Data';
 
 Future<void> showMyDialog(context, String data) async {
   return showDialog<void>(

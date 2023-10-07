@@ -1,67 +1,49 @@
-import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:pirim_depo/pages/about.dart';
 import 'package:pirim_depo/pages/admin_switch.dart';
 import 'package:pirim_depo/pages/help.dart';
-import 'package:pirim_depo/pages/settings.dart';
 import 'package:pirim_depo/pages/starting_page.dart';
-import 'package:pirim_depo/services/auth.dart';
 import 'package:pirim_depo/utils/get_data_firestore.dart';
-import 'package:pirim_depo/utils/navigation.dart';
-import 'package:pirim_depo/utils/text.dart';
-
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import '../services/auth.dart';
+import '../utils/navigation.dart';
 import 'login_page.dart';
 
-// ignore: must_be_immutable
 class Profile extends StatefulWidget {
-  late String profileImageUrl;
-  late String name;
-  late String userName;
-
-  Profile({
-    super.key,
-    required this.profileImageUrl,
-    required this.name,
-    required this.userName,
-  });
-
+  const Profile(
+      {Key? key,
+      required String profileImageUrl,
+      required String name,
+      required String userName})
+      : super(key: key);
   @override
   State<Profile> createState() => _ProfileState();
 }
 
 class _ProfileState extends State<Profile> {
   late bool hasProfileImage = false;
-  String profileImageUrl = '';
-  String lastProfileImageUrl = '';
-  late bool isVisible = false;
+  String profileImageUrl = "";
   var user = FirebaseAuth.instance.currentUser;
   var email = FirebaseAuth.instance.currentUser?.email.toString();
   var uid = FirebaseAuth.instance.currentUser!.uid.toString();
-
   @override
   void initState() {
-    getIdNo(uid);
-
-    isVisible = getOwnerStatus(uid);
-    setState(() {});
-    getImage();
-    checkProfileImage();
     super.initState();
+    getUserName(uid);
+    name = getName(uid);
+    getIdNo(uid);
+    checkProfileImage();
   }
 
   Future<void> checkProfileImage() async {
-    Reference ref = FirebaseStorage.instance
-        .ref()
-        .child("${FirebaseAuth.instance.currentUser?.uid}.jpg");
+    Reference ref = FirebaseStorage.instance.ref().child("${user?.uid}.jpg");
     try {
       String downloadUrl = await ref.getDownloadURL();
       if (downloadUrl.isNotEmpty) {
@@ -79,89 +61,79 @@ class _ProfileState extends State<Profile> {
 
   Future<dynamic> bottomSheet(BuildContext context) {
     return showModalBottomSheet(
-      barrierColor: Colors.transparent,
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return Container(
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 122, 122, 122),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
+        barrierColor: Colors.transparent,
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Container(
+                decoration: const BoxDecoration(
+                    color: Color.fromARGB(255, 122, 122, 122),
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30))),
+                height: 150,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    MaterialButton(
+                      onPressed: () {
+                        pickUploadImage(true);
+                      },
+                      child: const SizedBox(
+                        height: 70,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(left: 20.0, right: 20),
+                              child: Icon(
+                                Icons.photo_camera,
+                                size: 30,
+                              ),
+                            ),
+                            Text(
+                              'Kamera',
+                              style: TextStyle(fontSize: 20),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    MaterialButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        pickUploadImage(false);
+                      },
+                      child: const SizedBox(
+                        height: 70,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(left: 20.0, right: 20),
+                              child: Icon(
+                                Icons.photo,
+                                size: 30,
+                              ),
+                            ),
+                            Text(
+                              'Galeri',
+                              style: TextStyle(fontSize: 20),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              height: 150,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  MaterialButton(
-                    onPressed: () {
-                      pickUploadImage(true);
-
-                      setState(() {
-                        log('setState');
-                      });
-                    },
-                    child: SizedBox(
-                      height: 70,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.only(left: 20.0, right: 20),
-                            child: Icon(
-                              Icons.photo_camera,
-                              size: 30,
-                            ),
-                          ),
-                          Text(
-                            camera,
-                            style: const TextStyle(fontSize: 20),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  MaterialButton(
-                    onPressed: () {
-                      pickUploadImage(true);
-
-                      setState(() {
-                        log('setState');
-                      });
-                    },
-                    child: SizedBox(
-                      height: 70,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.only(left: 20.0, right: 20),
-                            child: Icon(
-                              Icons.photo,
-                              size: 30,
-                            ),
-                          ),
-                          Text(
-                            gallery,
-                            style: const TextStyle(fontSize: 20),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
+              );
+            },
+          );
+        });
   }
 
-  pickUploadImage(bool chose) async {
+  void pickUploadImage(bool chose) async {
     XFile? image;
     if (chose) {
       image = await ImagePicker().pickImage(
@@ -170,7 +142,6 @@ class _ProfileState extends State<Profile> {
         maxWidth: 512,
         imageQuality: 75,
       );
-      await checkProfileImage();
     } else if (!chose) {
       image = await ImagePicker().pickImage(
         source: ImageSource.gallery,
@@ -178,13 +149,10 @@ class _ProfileState extends State<Profile> {
         maxWidth: 512,
         imageQuality: 75,
       );
-      await checkProfileImage();
     }
-
     Reference ref = FirebaseStorage.instance
         .ref()
-        .child('${FirebaseAuth.instance.currentUser?.uid}.jpg');
-
+        .child("${FirebaseAuth.instance.currentUser?.uid}.jpg");
     await ref.putFile(File(image!.path));
     String downloadUrl = await ref.getDownloadURL();
     if (downloadUrl.isNotEmpty) {
@@ -194,7 +162,6 @@ class _ProfileState extends State<Profile> {
       });
     }
     final imageBytes = await ref.getData(10000000);
-
     // Put the image file in the cache
     await DefaultCacheManager().putFile(profileImageUrl, imageBytes!);
   }
@@ -205,125 +172,69 @@ class _ProfileState extends State<Profile> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: IconButton(
-          onPressed: () async {
-            log('Profile name: ${widget.name}');
-            log('Profile userName: ${widget.userName}');
-            Navigation.addRoute(
-              context,
-              StartPage(
-                email: getEmail(FirebaseAuth.instance.currentUser!.uid),
-                isAdmin: getAdminStatus(FirebaseAuth.instance.currentUser!.uid),
-                name: widget.name,
-                userName: widget.userName,
-              ),
-            );
-          },
-          icon: const Icon(Icons.arrow_back),
-        ),
-        title: Text(profile),
+            onPressed: () async {
+              Navigation.addRoute(
+                  context,
+                  StartPage(
+                    email: getEmail(FirebaseAuth.instance.currentUser!.uid),
+                    isAdmin:
+                        getAdminStatus(FirebaseAuth.instance.currentUser!.uid),
+                    name: getName(uid),
+                    userName: getUserName(uid),
+                  ));
+            },
+            icon: const Icon(Icons.arrow_back)),
+        title: const Text('Profilim'),
       ),
       body: Center(
         child: Column(
           children: [
-            hasProfileImage
-                ? GestureDetector(
-                    onTap: () async {
-                      userName = await getUserName(
-                          FirebaseAuth.instance.currentUser!.uid);
-
-                      name =
-                          await getName(FirebaseAuth.instance.currentUser!.uid);
-                      Timer.run(() {
-                        if (mounted) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Profile(
-                                  profileImageUrl: profileImageUrl.toString(),
-                                  name: name,
-                                  userName: userName,
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: GestureDetector(
+                  onTap: () {
+                    bottomSheet(context);
+                  },
+                  child: SizedBox(
+                      height: 150,
+                      width: 150,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(100),
+                        child: hasProfileImage
+                            ? CachedNetworkImage(
+                                key: UniqueKey(),
+                                imageUrl: profileImageUrl,
+                                placeholder: (context, url) =>
+                                    const CircularProgressIndicator(
+                                  strokeWidth: 20,
+                                  color: Colors.black,
                                 ),
-                              ));
-                        }
-                      });
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(6.0),
-                      child: SizedBox(
-                        height: 150,
-                        width: 150,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(100),
-                          child: CachedNetworkImage(
-                            imageUrl: getImage().toString(),
-                            imageBuilder: (context, imageProvider) => Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: NetworkImage(profileImageUrl),
+                                height: 50,
+                                width: 50,
+                                fit: BoxFit.cover,
+                              )
+                            : Container(
+                                height: 150,
+                                width: 150,
+                                decoration: const BoxDecoration(
+                                    color: Colors.grey, shape: BoxShape.circle),
+                                child: const Icon(
+                                  Icons.person,
+                                  size: 80,
+                                  color: Colors.black,
                                 ),
                               ),
-                            ),
-                            placeholder: (context, url) => Container(
-                              width: 150,
-                              height: 150,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                              ),
-                              child: const CircularProgressIndicator(),
-                            ),
-                            errorWidget: (context, url, error) => const Icon(
-                              Icons.error,
-                              color: Colors.red,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                : Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: GestureDetector(
-                      onTap: () async {
-                        userName = await getUserName(
-                            FirebaseAuth.instance.currentUser!.uid);
-                        name = await getName(
-                            FirebaseAuth.instance.currentUser!.uid);
-                        if (mounted) {
-                          Navigation.addRoute(
-                              context,
-                              Profile(
-                                profileImageUrl: profileImageUrl.toString(),
-                                name: name,
-                                userName: userName,
-                              ));
-                        }
-                      },
-                      child: Container(
-                        height: 150,
-                        width: 150,
-                        decoration: const BoxDecoration(
-                          color: Colors.grey,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.person,
-                          size: 80,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
+                      ))),
+            ),
             Center(
               child: Text(
-                widget.name.toString(),
+                name.toString(),
                 style: const TextStyle(fontSize: 20),
               ),
             ),
             Center(
               child: Text(
-                '@${widget.userName.toString()}',
+                "@${userName.toString()}",
                 style: const TextStyle(fontSize: 15),
               ),
             ),
@@ -333,6 +244,38 @@ class _ProfileState extends State<Profile> {
                 color: const Color.fromARGB(97, 168, 168, 168),
                 height: 1,
                 width: MediaQuery.of(context).size.width * 0.8,
+              ),
+            ),
+            MaterialButton(
+              onPressed: () {},
+              child: SizedBox(
+                height: 70,
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    const Icon(
+                      Icons.settings_outlined,
+                      size: 30,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 20),
+                      child: Text(
+                        'Ayarlar',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    const Spacer(),
+                    Container(
+                        height: 35,
+                        width: 35,
+                        decoration: BoxDecoration(
+                            color: const Color.fromARGB(97, 168, 168, 168),
+                            borderRadius: BorderRadius.circular(9)),
+                        child: const Icon(Icons.keyboard_arrow_right))
+                  ],
+                ),
               ),
             ),
             MaterialButton(
@@ -349,26 +292,22 @@ class _ProfileState extends State<Profile> {
                       Icons.info_outline,
                       size: 30,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 20),
                       child: Text(
-                        about,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        'Hakkında',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w500),
                       ),
                     ),
                     const Spacer(),
                     Container(
-                      height: 35,
-                      width: 35,
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(97, 168, 168, 168),
-                        borderRadius: BorderRadius.circular(9),
-                      ),
-                      child: const Icon(Icons.keyboard_arrow_right),
-                    ),
+                        height: 35,
+                        width: 35,
+                        decoration: BoxDecoration(
+                            color: const Color.fromARGB(97, 168, 168, 168),
+                            borderRadius: BorderRadius.circular(9)),
+                        child: const Icon(Icons.keyboard_arrow_right))
                   ],
                 ),
               ),
@@ -378,9 +317,8 @@ class _ProfileState extends State<Profile> {
                 Navigation.addRoute(context, const Help());
               },
               child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(10)),
                 height: 70,
                 width: MediaQuery.of(context).size.width * 0.8,
                 child: Row(
@@ -390,49 +328,11 @@ class _ProfileState extends State<Profile> {
                       Icons.help_outline,
                       size: 30,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 20),
                       child: Text(
-                        help,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    const Spacer(),
-                    Container(
-                      height: 35,
-                      width: 35,
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(97, 168, 168, 168),
-                        borderRadius: BorderRadius.circular(9),
-                      ),
-                      child: const Icon(Icons.keyboard_arrow_right),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            MaterialButton(
-              onPressed: () {
-                Navigation.addRoute(context, const SettingsPage());
-              },
-              child: SizedBox(
-                height: 70,
-                width: MediaQuery.of(context).size.width * 0.8,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    const Icon(
-                      Icons.settings_outlined,
-                      size: 30,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20),
-                      child: Text(
-                        settings,
-                        style: const TextStyle(
+                        'Yardım',
+                        style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w500),
                       ),
                     ),
@@ -449,15 +349,14 @@ class _ProfileState extends State<Profile> {
               ),
             ),
             Visibility(
-              visible: isVisible,
+              visible: getOwnerStatus(FirebaseAuth.instance.currentUser!.uid),
               child: MaterialButton(
                 onPressed: () {
                   Navigation.addRoute(context, const AdminSwitchPage());
                 },
                 child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(10)),
                   height: 70,
                   width: MediaQuery.of(context).size.width * 0.8,
                   child: Row(
@@ -467,26 +366,22 @@ class _ProfileState extends State<Profile> {
                         Icons.admin_panel_settings_outlined,
                         size: 30,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20),
+                      const Padding(
+                        padding: EdgeInsets.only(left: 20),
                         child: Text(
-                          adminPanel,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                          ),
+                          'Yönetici Paneli',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w500),
                         ),
                       ),
                       const Spacer(),
                       Container(
-                        height: 35,
-                        width: 35,
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(97, 168, 168, 168),
-                          borderRadius: BorderRadius.circular(9),
-                        ),
-                        child: const Icon(Icons.keyboard_arrow_right),
-                      ),
+                          height: 35,
+                          width: 35,
+                          decoration: BoxDecoration(
+                              color: const Color.fromARGB(97, 168, 168, 168),
+                              borderRadius: BorderRadius.circular(9)),
+                          child: const Icon(Icons.keyboard_arrow_right))
                     ],
                   ),
                 ),
@@ -507,15 +402,12 @@ class _ProfileState extends State<Profile> {
                     .doc(FirebaseAuth.instance.currentUser!.uid)
                     .update({'isLogedIn': 0});
                 AuthService.signOut();
-                if (mounted) {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginPage(),
-                    ),
-                    (route) => false,
-                  );
-                }
+                // ignore: use_build_context_synchronously
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                  (route) => false,
+                );
               },
               child: SizedBox(
                 height: 70,
@@ -527,26 +419,22 @@ class _ProfileState extends State<Profile> {
                       Icons.logout_outlined,
                       size: 30,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 20),
                       child: Text(
-                        logOut,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        'Çıkış Yap',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w500),
                       ),
                     ),
                     const Spacer(),
                     Container(
-                      height: 35,
-                      width: 35,
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(187, 231, 113, 113),
-                        borderRadius: BorderRadius.circular(9),
-                      ),
-                      child: const Icon(Icons.keyboard_arrow_right),
-                    ),
+                        height: 35,
+                        width: 35,
+                        decoration: BoxDecoration(
+                            color: const Color.fromARGB(187, 231, 113, 113),
+                            borderRadius: BorderRadius.circular(9)),
+                        child: const Icon(Icons.keyboard_arrow_right))
                   ],
                 ),
               ),
@@ -557,25 +445,19 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  getImage() {
-    checkProfileImage();
-    return profileImageUrl;
+  TextField inputDecoration(String hintText) {
+    log(hintText);
+    return TextField(
+      enabled: false,
+      keyboardType: TextInputType.emailAddress,
+      textInputAction: TextInputAction.next,
+      decoration: InputDecoration(
+          disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide:
+                  const BorderSide(color: Color.fromARGB(255, 66, 66, 66))),
+          hintText: hintText,
+          contentPadding: const EdgeInsets.all(15.0)),
+    );
   }
-}
-
-TextField inputDecoration(String hintText) {
-  log(hintText);
-  return TextField(
-    enabled: false,
-    keyboardType: TextInputType.emailAddress,
-    textInputAction: TextInputAction.next,
-    decoration: InputDecoration(
-      disabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(15),
-        borderSide: const BorderSide(color: Color.fromARGB(255, 66, 66, 66)),
-      ),
-      hintText: hintText,
-      contentPadding: const EdgeInsets.all(15.0),
-    ),
-  );
 }
